@@ -1,1 +1,1 @@
-export * from "./obfuscator";
+export * from "./obfuscators";
