@@ -1,5 +1,5 @@
 /**
- * An object that will obfuscate text.
+ * A function that will obfuscate text.
  */
 export interface Obfuscator {
   /**

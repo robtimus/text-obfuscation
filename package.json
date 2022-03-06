@@ -28,6 +28,7 @@
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.21",
+    "@types/traverse": "^0.6.32",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "eslint": "^8.10.0",
@@ -54,5 +55,8 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
+  },
+  "dependencies": {
+    "traverse": "^0.6.6"
   }
 }
