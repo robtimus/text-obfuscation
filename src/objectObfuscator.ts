@@ -16,17 +16,6 @@ export interface ObjectObfuscator {
 }
 
 /**
- * Properties for creating {@link ObjectObfuscator}s.
- */
-export interface ObjectObfuscatorProperties {
-  /**
-   * The properties to obfuscate.
-   * Passing a function or "ignore" is shorthand for passing {@link PropertyOptions} with only the obfuscate property set.
-   */
-  [name: string]: PropertyOptions | ((text: string) => string) | "ignore";
-}
-
-/**
  * Per-property options.
  */
 export interface PropertyOptions {
@@ -74,9 +63,14 @@ interface PropertyConfig {
 }
 
 /**
+ * @param properties the properties to obfuscate.
+ *                   Passing a function or "ignore" is shorthand for passing {@link PropertyOptions} with only the obfuscate property set.
  * @returns an immutable obfuscator that obfuscates properties according to the given rules.
  */
-export function newObjectObfuscator(properties: ObjectObfuscatorProperties, globalProperties: GlobalObjectObfuscatorProperties = {}): ObjectObfuscator {
+export function newObjectObfuscator(
+  properties: { [name: string]: PropertyOptions | ((text: string) => string) | "ignore" },
+  globalProperties: GlobalObjectObfuscatorProperties = {}
+): ObjectObfuscator {
   // First normalize the input properties, this also allows easier case sensitive/insensitive lookups
   const caseSensitiveProperties: { [name: string]: PropertyConfig } = {};
   const caseInsensitiveProperties: { [name: string]: PropertyConfig } = {};
