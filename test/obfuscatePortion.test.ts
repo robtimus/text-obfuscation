@@ -12,8 +12,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hell*******"],
       ["", ""],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -29,8 +29,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "*******orld"],
       ["", ""],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -47,8 +47,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hell***orld"],
       ["", ""],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -65,8 +65,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hell*******"],
       ["", ""],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -83,8 +83,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "*******orld"],
       ["", ""],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -101,8 +101,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hell*****"],
       ["", "*********"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -119,8 +119,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "*****orld"],
       ["", "*********"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -138,8 +138,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hell*orld"],
       ["", "*********"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -157,8 +157,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hell*****"],
       ["", "*********"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -176,8 +176,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "*****orld"],
       ["", "*********"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -194,8 +194,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hell"],
       ["", "****"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -212,8 +212,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "orld"],
       ["", "****"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -231,8 +231,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hellorld"],
       ["", "********"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -250,8 +250,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hell"],
       ["", "****"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -269,8 +269,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "orld"],
       ["", "****"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -287,8 +287,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "hello wor**"],
       ["", ""],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -305,8 +305,8 @@ describe("obfuscatePortion", () => {
       ["hello world", "**llo world"],
       ["", ""],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });

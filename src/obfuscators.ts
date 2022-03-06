@@ -5,7 +5,7 @@ export interface Obfuscator {
   /**
    * Obfuscates the given text.
    */
-  obfuscateText(text: string): string;
+  (text: string): string;
   /**
    * Creates a prefix that can be used to chain another obfuscator to this obfuscator.
    * For the part up to the given prefix length, this obfuscator will be used; for any remaining content another obfuscator will be used.
@@ -159,36 +159,32 @@ export function obfuscatePortion(options: ObfuscatePortionOptions): Obfuscator {
  * @returns an obfuscator that uses the given function to obfuscate text.
  */
 export function obfuscateCustom(obfuscate: (text: string) => string): Obfuscator {
-  const obfuscator = {
-    obfuscateText: obfuscate,
-    untilLength: (prefixLength: number) => {
-      if (prefixLength <= 0) {
-        throw new Error(prefixLength + " <= 0");
-      }
-      return {
-        then: (other: Obfuscator) => new CombinedObfuscator(obfuscator, prefixLength, other),
-      };
-    },
+  const obfuscator = (text: string): string => obfuscate(text);
+  obfuscator.untilLength = (prefixLength: number) => {
+    if (prefixLength <= 0) {
+      throw new Error(prefixLength + " <= 0");
+    }
+    return {
+      then: (other: Obfuscator) => combinedObfuscator(obfuscator, prefixLength, other),
+    };
   };
   return obfuscator;
 }
 
-class CombinedObfuscator implements Obfuscator {
-  constructor(private first: Obfuscator, private lengthForFirst: number, private second: Obfuscator) {}
-
-  obfuscateText(text: string): string {
-    if (text.length <= this.lengthForFirst) {
-      return this.first.obfuscateText(text);
+function combinedObfuscator(first: Obfuscator, lengthForFirst: number, second: Obfuscator): Obfuscator {
+  const obfuscator = (text: string): string => {
+    if (text.length <= lengthForFirst) {
+      return first(text);
     }
-    return this.first.obfuscateText(text.substring(0, this.lengthForFirst)) + this.second.obfuscateText(text.substring(this.lengthForFirst));
-  }
-
-  untilLength(prefixLength: number): ObfuscatorPrefix {
-    if (prefixLength <= this.lengthForFirst) {
-      throw new Error(prefixLength + " <= " + this.lengthForFirst);
+    return first(text.substring(0, lengthForFirst)) + second(text.substring(lengthForFirst));
+  };
+  obfuscator.untilLength = (prefixLength: number): ObfuscatorPrefix => {
+    if (prefixLength <= lengthForFirst) {
+      throw new Error(prefixLength + " <= " + lengthForFirst);
     }
     return {
-      then: (other) => new CombinedObfuscator(this, prefixLength, other),
+      then: (other) => combinedObfuscator(obfuscator, prefixLength, other),
     };
-  }
+  };
+  return obfuscator;
 }

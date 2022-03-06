@@ -9,8 +9,8 @@ describe("obfuscateAll", () => {
     ["hello world", "***********"],
     ["", ""],
   ];
-  it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-    const obfuscated = obfuscator.obfuscateText(text);
+  it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+    const obfuscated = obfuscator(text);
     expect(obfuscated).toBe(expected);
   });
 });

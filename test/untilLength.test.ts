@@ -21,8 +21,8 @@ describe("obfuscateNone.untilLength(4)", () => {
       ["0123456789ABCDE", "0123********CDE"],
       ["0123456789ABCDEF", "0123********CDEF"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -47,8 +47,8 @@ describe("obfuscateNone.untilLength(4)", () => {
       ["0123456789ABCDE", "0123***"],
       ["0123456789ABCDEF", "0123***"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -75,8 +75,8 @@ describe("obfuscateWithFixedLength(3).untilLength(4)", () => {
       ["0123456789ABCDE", "***456789ABCDE"],
       ["0123456789ABCDEF", "***456789ABCDEF"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });
@@ -101,8 +101,8 @@ describe("obfuscateWithFixedLength(3).untilLength(4)", () => {
       ["0123456789ABCDE", "***xxx"],
       ["0123456789ABCDEF", "***xxx"],
     ];
-    it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-      const obfuscated = obfuscator.obfuscateText(text);
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
       expect(obfuscated).toBe(expected);
     });
   });

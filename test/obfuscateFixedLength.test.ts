@@ -3,8 +3,8 @@ import { obfuscateWithFixedLength } from "../src";
 function testWithFixedLength(fixedLength: number, expected: string) {
   const obfuscator = obfuscateWithFixedLength(fixedLength);
   const cases = ["foo", "foobar", "hello", "hello world", ""];
-  it.each(cases)("obfuscateText('%s') === '" + expected + "'", (text) => {
-    const obfuscated = obfuscator.obfuscateText(text);
+  it.each(cases)("applied to '%s' should be '" + expected + "'", (text) => {
+    const obfuscated = obfuscator(text);
     expect(obfuscated).toBe(expected);
   });
 }

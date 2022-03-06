@@ -1,6 +1,6 @@
 import { obfuscateCustom } from "../src";
 
-describe("obfuscateAll", () => {
+describe("obfuscateCustom", () => {
   const obfuscator = obfuscateCustom((text: string) => text.toUpperCase());
   const cases = [
     ["foo", "FOO"],
@@ -9,8 +9,8 @@ describe("obfuscateAll", () => {
     ["hello world", "HELLO WORLD"],
     ["", ""],
   ];
-  it.each(cases)("obfuscateText('%s') === '%s'", (text, expected) => {
-    const obfuscated = obfuscator.obfuscateText(text);
+  it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+    const obfuscated = obfuscator(text);
     expect(obfuscated).toBe(expected);
   });
 });
