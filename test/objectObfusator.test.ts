@@ -423,4 +423,52 @@ describe("obfuscateObfuscator", () => {
     const obfuscated = objObfuscator(input);
     expect(obfuscated).toEqual(expectedObfuscatingLeafs);
   });
+
+  describe("obfuscateProperty", () => {
+    describe("globally case sensitive", () => {
+      const cases = [
+        ["string", "hello world", "***"],
+        ["notObfuscated", "hello world", "hello world"],
+        ["notMatched", "hello world", "hello world"],
+      ];
+
+      const obfuscator = obfuscateWithFixedLength(3);
+      const objObfuscator = objectObfuscator(
+        {
+          string: obfuscator,
+          notObfuscated: "ignore",
+        },
+        {
+          caseSensitive: true,
+        }
+      );
+      it.each(cases)("for propertyName '%s' should obfuscate '%s' to '%s'", (propertyName, text, expected) => {
+        const obfuscated = objObfuscator.obfuscateProperty(propertyName, text);
+        expect(obfuscated).toBe(expected);
+      });
+    });
+
+    describe("globally case insensitive", () => {
+      const cases = [
+        ["string", "hello world", "***"],
+        ["notObfuscated", "hello world", "hello world"],
+        ["notMatched", "hello world", "hello world"],
+      ];
+
+      const obfuscator = obfuscateWithFixedLength(3);
+      const objObfuscator = objectObfuscator(
+        {
+          STRING: obfuscator,
+          NOTOBFUSCATED: "ignore",
+        },
+        {
+          caseSensitive: false,
+        }
+      );
+      it.each(cases)("for propertyName '%s' should obfuscate '%s' to '%s'", (propertyName, text, expected) => {
+        const obfuscated = objObfuscator.obfuscateProperty(propertyName, text);
+        expect(obfuscated).toBe(expected);
+      });
+    });
+  });
 });

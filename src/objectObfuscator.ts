@@ -6,9 +6,13 @@ import traverse = require("traverse");
 export interface ObjectObfuscator {
   /**
    * Obfuscates the given object. This may change some non-string properties into strings.
-   * @returns A copy of the given object with properties obfuscated as necessary.
+   * @returns a copy of the given object with properties obfuscated as necessary.
    */
   (o: object): object;
+  /**
+   * Obfuscates the value for a single property.
+   */
+  obfuscateProperty(propertyName: string, text: string): string;
 }
 
 /**
@@ -102,7 +106,7 @@ export function objectObfuscator(properties: ObjectObfuscatorProperties, globalP
     }
   }
 
-  return (o: object): object => {
+  const obfuscator = (o: object): object => {
     o = JSON.parse(JSON.stringify(o));
     traverse(o).forEach(function (v) {
       if (this.key) {
@@ -127,4 +131,10 @@ export function objectObfuscator(properties: ObjectObfuscatorProperties, globalP
     });
     return o;
   };
+  obfuscator.obfuscateProperty = (propertyName: string, text: string): string => {
+    const config = caseSensitiveProperties[propertyName] || caseInsensitiveProperties[propertyName.toLowerCase()];
+    const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : (s: string) => s;
+    return obfuscator(text);
+  };
+  return obfuscator;
 }
