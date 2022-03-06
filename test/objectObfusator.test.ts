@@ -1,4 +1,4 @@
-import { obfuscateWithFixedLength, objectObfuscator } from "../src";
+import { obfuscateWithFixedLength, newObjectObfuscator } from "../src";
 
 describe("obfuscateObfuscator", () => {
   const input = {
@@ -266,7 +266,7 @@ describe("obfuscateObfuscator", () => {
 
   it("globally case sensitive", () => {
     const obfuscator = obfuscateWithFixedLength(3);
-    const objObfuscator = objectObfuscator(
+    const objectObfuscator = newObjectObfuscator(
       {
         string: obfuscator,
         int: obfuscator,
@@ -283,13 +283,13 @@ describe("obfuscateObfuscator", () => {
       }
     );
 
-    const obfuscated = objObfuscator(input);
+    const obfuscated = objectObfuscator(input);
     expect(obfuscated).toEqual(expectedObfucatingAll);
   });
 
   it("globally case insensitive", () => {
     const obfuscator = obfuscateWithFixedLength(3);
-    const objObfuscator = objectObfuscator(
+    const objectObfuscator = newObjectObfuscator(
       {
         STRING: obfuscator,
         INT: obfuscator,
@@ -306,13 +306,13 @@ describe("obfuscateObfuscator", () => {
       }
     );
 
-    const obfuscated = objObfuscator(input);
+    const obfuscated = objectObfuscator(input);
     expect(obfuscated).toEqual(expectedObfucatingAll);
   });
 
   it("globally matching objects and arrays", () => {
     const obfuscator = obfuscateWithFixedLength(3);
-    const objObfuscator = objectObfuscator(
+    const objectObfuscator = newObjectObfuscator(
       {
         string: obfuscator,
         int: obfuscator,
@@ -330,7 +330,7 @@ describe("obfuscateObfuscator", () => {
       }
     );
 
-    const obfuscated = objObfuscator(input);
+    const obfuscated = objectObfuscator(input);
     expect(obfuscated).toEqual(expectedObfucatingAll);
   });
 
@@ -341,7 +341,7 @@ describe("obfuscateObfuscator", () => {
       matchObjects: true,
       matchArrays: true,
     };
-    const objObfuscator = objectObfuscator(
+    const objecObfuscator = newObjectObfuscator(
       {
         string: propertyConfig,
         int: propertyConfig,
@@ -363,13 +363,13 @@ describe("obfuscateObfuscator", () => {
       }
     );
 
-    const obfuscated = objObfuscator(input);
+    const obfuscated = objecObfuscator(input);
     expect(obfuscated).toEqual(expectedObfucatingAll);
   });
 
   it("globally not matching objects and arrays", () => {
     const obfuscator = obfuscateWithFixedLength(3);
-    const objObfuscator = objectObfuscator(
+    const objectObfuscator = newObjectObfuscator(
       {
         string: obfuscator,
         int: obfuscator,
@@ -387,7 +387,7 @@ describe("obfuscateObfuscator", () => {
       }
     );
 
-    const obfuscated = objObfuscator(input);
+    const obfuscated = objectObfuscator(input);
     expect(obfuscated).toEqual(expectedObfuscatingLeafs);
   });
 
@@ -398,7 +398,7 @@ describe("obfuscateObfuscator", () => {
       matchObjects: false,
       matchArrays: false,
     };
-    const objObfuscator = objectObfuscator(
+    const objectObfuscator = newObjectObfuscator(
       {
         string: propertyConfig,
         int: propertyConfig,
@@ -420,7 +420,7 @@ describe("obfuscateObfuscator", () => {
       }
     );
 
-    const obfuscated = objObfuscator(input);
+    const obfuscated = objectObfuscator(input);
     expect(obfuscated).toEqual(expectedObfuscatingLeafs);
   });
 
@@ -433,7 +433,7 @@ describe("obfuscateObfuscator", () => {
       ];
 
       const obfuscator = obfuscateWithFixedLength(3);
-      const objObfuscator = objectObfuscator(
+      const objectObfuscator = newObjectObfuscator(
         {
           string: obfuscator,
           notObfuscated: "ignore",
@@ -443,7 +443,7 @@ describe("obfuscateObfuscator", () => {
         }
       );
       it.each(cases)("for propertyName '%s' should obfuscate '%s' to '%s'", (propertyName, text, expected) => {
-        const obfuscated = objObfuscator.obfuscateProperty(propertyName, text);
+        const obfuscated = objectObfuscator.obfuscateProperty(propertyName, text);
         expect(obfuscated).toBe(expected);
       });
     });
@@ -456,7 +456,7 @@ describe("obfuscateObfuscator", () => {
       ];
 
       const obfuscator = obfuscateWithFixedLength(3);
-      const objObfuscator = objectObfuscator(
+      const objectObfuscator = newObjectObfuscator(
         {
           STRING: obfuscator,
           NOTOBFUSCATED: "ignore",
@@ -466,7 +466,7 @@ describe("obfuscateObfuscator", () => {
         }
       );
       it.each(cases)("for propertyName '%s' should obfuscate '%s' to '%s'", (propertyName, text, expected) => {
-        const obfuscated = objObfuscator.obfuscateProperty(propertyName, text);
+        const obfuscated = objectObfuscator.obfuscateProperty(propertyName, text);
         expect(obfuscated).toBe(expected);
       });
     });

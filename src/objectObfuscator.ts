@@ -76,7 +76,7 @@ interface PropertyConfig {
 /**
  * @returns an immutable obfuscator that obfuscates properties according to the given rules.
  */
-export function objectObfuscator(properties: ObjectObfuscatorProperties, globalProperties: GlobalObjectObfuscatorProperties = {}): ObjectObfuscator {
+export function newObjectObfuscator(properties: ObjectObfuscatorProperties, globalProperties: GlobalObjectObfuscatorProperties = {}): ObjectObfuscator {
   // First normalize the input properties, this also allows easier case sensitive/insensitive lookups
   const caseSensitiveProperties: { [name: string]: PropertyConfig } = {};
   const caseInsensitiveProperties: { [name: string]: PropertyConfig } = {};
