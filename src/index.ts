@@ -1,2 +1,2 @@
 export * from "./obfuscators";
-export * from "./objectObfuscator";
+export * from "./propertyObfuscator";

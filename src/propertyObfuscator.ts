@@ -1,11 +1,11 @@
 import traverse = require("traverse");
 
 /**
- * A function that will obfuscate objects.
+ * A function that will obfuscate object properties.
  */
-export interface ObjectObfuscator {
+export interface PropertyObfuscator {
   /**
-   * Obfuscates the given object. This may change some non-string properties into strings.
+   * Obfuscates all properties in the given object recursively. This may change some non-string properties into strings.
    * @returns a copy of the given object with properties obfuscated as necessary.
    */
   (o: object): object;
@@ -41,7 +41,7 @@ export interface PropertyOptions {
 /**
  * Global options that serve as defaults.
  */
-export interface GlobalObjectObfuscatorProperties {
+export interface GlobalPropertyObfuscatorOptions {
   /**
    * Whether or not to use a case sensitive match on property name. Defaults to true.
    */
@@ -67,10 +67,10 @@ interface PropertyConfig {
  *                   Passing a function or "ignore" is shorthand for passing {@link PropertyOptions} with only the obfuscate property set.
  * @returns an immutable obfuscator that obfuscates properties according to the given rules.
  */
-export function newObjectObfuscator(
+export function newPropertyObfuscator(
   properties: { [name: string]: PropertyOptions | ((text: string) => string) | "ignore" },
-  globalProperties: GlobalObjectObfuscatorProperties = {}
-): ObjectObfuscator {
+  globalProperties: GlobalPropertyObfuscatorOptions = {}
+): PropertyObfuscator {
   // First normalize the input properties, this also allows easier case sensitive/insensitive lookups
   const caseSensitiveProperties: { [name: string]: PropertyConfig } = {};
   const caseInsensitiveProperties: { [name: string]: PropertyConfig } = {};
