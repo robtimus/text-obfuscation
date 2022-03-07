@@ -1,4 +1,5 @@
 import traverse = require("traverse");
+import { obfuscateNone } from "./obfuscators";
 
 /**
  * A function that will obfuscate object properties.
@@ -12,7 +13,7 @@ export interface PropertyObfuscator {
   /**
    * Obfuscates the value for a single property.
    */
-  obfuscateProperty(propertyName: string, text: string): string;
+  (propertyName: string, value: string): string;
 }
 
 /**
@@ -100,7 +101,7 @@ export function newPropertyObfuscator(
     }
   }
 
-  const obfuscator = (o: object): object => {
+  function obfuscateObject(o: object): object {
     o = JSON.parse(JSON.stringify(o));
     traverse(o).forEach(function (v) {
       if (this.key) {
@@ -124,11 +125,18 @@ export function newPropertyObfuscator(
       }
     });
     return o;
-  };
-  obfuscator.obfuscateProperty = (propertyName: string, text: string): string => {
+  }
+  function obfuscateProperty(propertyName: string, value: string): string {
     const config = caseSensitiveProperties[propertyName] || caseInsensitiveProperties[propertyName.toLowerCase()];
-    const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : (s: string) => s;
-    return obfuscator(text);
-  };
-  return obfuscator;
+    const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : obfuscateNone;
+    return obfuscator(value);
+  }
+
+  function obfuscate(o: object): object;
+  function obfuscate(propertyName: string, value: string): string;
+  function obfuscate(toObfuscate: object | string, value?: string): object | string {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return typeof toObfuscate === "string" ? obfuscateProperty(toObfuscate, value!) : obfuscateObject(toObfuscate);
+  }
+  return obfuscate;
 }
