@@ -6,14 +6,14 @@ import { obfuscateNone } from "./obfuscators";
  */
 export interface PropertyObfuscator {
   /**
+   * Obfuscates the value for a single property.
+   */
+  (propertyName: string, value: string): string;
+  /**
    * Obfuscates all properties in the given object recursively. This may change some non-string properties into strings.
    * @returns a copy of the given object with properties obfuscated as necessary.
    */
   (o: object): object;
-  /**
-   * Obfuscates the value for a single property.
-   */
-  (propertyName: string, value: string): string;
 }
 
 /**
@@ -101,6 +101,11 @@ export function newPropertyObfuscator(
     }
   }
 
+  function obfuscateProperty(propertyName: string, value: string): string {
+    const config = caseSensitiveProperties[propertyName] || caseInsensitiveProperties[propertyName.toLowerCase()];
+    const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : obfuscateNone;
+    return obfuscator(value);
+  }
   function obfuscateObject(o: object): object {
     o = JSON.parse(JSON.stringify(o));
     traverse(o).forEach(function (v) {
@@ -126,17 +131,12 @@ export function newPropertyObfuscator(
     });
     return o;
   }
-  function obfuscateProperty(propertyName: string, value: string): string {
-    const config = caseSensitiveProperties[propertyName] || caseInsensitiveProperties[propertyName.toLowerCase()];
-    const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : obfuscateNone;
-    return obfuscator(value);
-  }
 
-  function obfuscate(o: object): object;
   function obfuscate(propertyName: string, value: string): string;
-  function obfuscate(toObfuscate: object | string, value?: string): object | string {
+  function obfuscate(o: object): object;
+  function obfuscate(propertyNameOrObject: object | string, value?: string): object | string {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return typeof toObfuscate === "string" ? obfuscateProperty(toObfuscate, value!) : obfuscateObject(toObfuscate);
+    return typeof propertyNameOrObject === "string" ? obfuscateProperty(propertyNameOrObject, value!) : obfuscateObject(propertyNameOrObject);
   }
   return obfuscate;
 }
