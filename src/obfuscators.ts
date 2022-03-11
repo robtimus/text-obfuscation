@@ -41,7 +41,7 @@ export function obfuscateAll(maskChar = "*"): Obfuscator {
 export const obfuscateNone = obfuscateCustom((text) => text);
 
 /**
- * @returns an immutable obfuscator that replaces all text with the given fixed number of the give mask character.
+ * @returns an immutable obfuscator that replaces all text with the given fixed number of the given mask character.
  */
 export function obfuscateWithFixedLength(fixedLength: number, maskChar = "*"): Obfuscator {
   const fixedValue = maskChar.repeat(fixedLength);

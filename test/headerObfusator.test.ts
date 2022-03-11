@@ -1,3 +1,4 @@
+import { IncomingHttpHeaders, OutgoingHttpHeaders } from "http";
 import { obfuscateWithFixedLength, newHeaderObfuscator } from "../src";
 
 describe("newHeaderObfuscator", () => {
@@ -6,15 +7,57 @@ describe("newHeaderObfuscator", () => {
     authorization: obfuscator,
   });
 
-  it("for object", () => {
-    const input = {
+  describe("for http.OutgoingHttpHeaders", () => {
+    it("without number obfuscation", () => {
+      const input: OutgoingHttpHeaders = {
+        "Content-Type": "application/json",
+        "Content-Length": 13,
+        Authorization: "Bearer someToken",
+        "not-set": undefined,
+      };
+
+      const expected = {
+        "Content-Type": "application/json",
+        "Content-Length": 13,
+        Authorization: "***",
+      };
+
+      const obfuscated = headerObfuscator(input);
+      expect(obfuscated).toEqual(expected);
+    });
+    it("with number obfuscation", () => {
+      const input: OutgoingHttpHeaders = {
+        "Content-Type": "application/json",
+        "Content-Length": 13,
+        Authorization: "Bearer someToken",
+        "not-set": undefined,
+      };
+
+      const expected = {
+        "Content-Type": "application/json",
+        "Content-Length": "***",
+        Authorization: "***",
+      };
+
+      const obfuscated = newHeaderObfuscator({
+        "content-length": obfuscator,
+        authorization: obfuscator,
+      })(input);
+      expect(obfuscated).toEqual(expected);
+    });
+  });
+
+  it("for http.IncomingHttpHeaders", () => {
+    const input: IncomingHttpHeaders = {
       "Content-Type": "application/json",
+      "Content-Length": "13",
       Authorization: "Bearer someToken",
       "not-set": undefined,
     };
 
     const expected = {
       "Content-Type": "application/json",
+      "Content-Length": "13",
       Authorization: "***",
     };
 
