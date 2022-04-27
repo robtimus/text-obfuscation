@@ -149,7 +149,7 @@ For instance, for credit card numbers of exactly 16 characters, the above can al
 
 ```
 const obfuscator = obfuscateNone.untilLength(4)
-  .then(obfuscateAll).untilLength(12)
+  .then(obfuscateAll()).untilLength(12)
   .then(obfuscateNone);
 ```
 
