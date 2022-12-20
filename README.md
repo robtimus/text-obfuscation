@@ -160,7 +160,7 @@ const obfuscator = obfuscateNone.untilLength(4)
   .then(obfuscatePortion({
     keepAtEnd: 4,
     atLeastFromStart: 8
-  });
+  }));
 const obfuscated = obfuscator("12345678901234");
 // obfuscated is "1234********34"
 ```
@@ -223,7 +223,7 @@ const headerObfuscator = newHeaderObfuscator({
 const obfuscatedAuthorization = headerObfuscator("authorization", "Bearer someToken");
 // obfuscatedAuthorization is "***"
 const obfuscatedAuthorizations = headerObfuscator("authorization", ["Bearer someToken"]);
-// obfuscatedAuthorization is ["***]
+// obfuscatedAuthorization is ["***"]
 const obfuscatedContentType = headerObfuscator("Content-Type", "application/json");
 // obfuscatedContentType is "application/json"
 const obfuscatedHeaders = headerObfuscator({
