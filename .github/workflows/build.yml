@@ -1,4 +1,4 @@
-name: NPM
+name: Build
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [12.x, 14.x, 16.x]
+        node: [12.x, 14.x, 16.x, 18.x]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
