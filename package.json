@@ -54,7 +54,8 @@
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "collectCoverage": true
   },
   "dependencies": {
     "traverse": "^0.6.6"
