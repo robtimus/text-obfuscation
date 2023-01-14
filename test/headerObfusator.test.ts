@@ -45,6 +45,30 @@ describe("newHeaderObfuscator", () => {
       })(input);
       expect(obfuscated).toEqual(expected);
     });
+    it("with array obfuscation", () => {
+      const input: OutgoingHttpHeaders = {
+        "Content-Type": "application/json",
+        "Content-Length": 13,
+        Authorization: "Bearer someToken",
+        "not-set": undefined,
+        multi: ["value1", "value2"],
+        "multi-obfuscated": ["value1", "value2"],
+      };
+
+      const expected = {
+        "Content-Type": "application/json",
+        "Content-Length": 13,
+        Authorization: "***",
+        multi: ["value1", "value2"],
+        "multi-obfuscated": ["***", "***"],
+      };
+
+      const obfuscated = newHeaderObfuscator({
+        authorization: obfuscator,
+        "multi-obfuscated": obfuscator,
+      })(input);
+      expect(obfuscated).toEqual(expected);
+    });
   });
 
   it("for http.IncomingHttpHeaders", () => {
