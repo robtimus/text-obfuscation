@@ -1,4 +1,9 @@
 # text-obfuscation
+[![npm](https://img.shields.io/npm/v/text-obfuscation)](https://www.npmjs.com/package/text-obfuscation)
+[![Build Status](https://github.com/robtimus/text-obfuscation/actions/workflows/build.yml/badge.svg)](https://github.com/robtimus/text-obfuscation/actions/workflows/build.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=robtimus%3Atext-obfuscation&metric=alert_status)](https://sonarcloud.io/summary/overall?id=robtimus%3Atext-obfuscation)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=robtimus%3Atext-obfuscation&metric=coverage)](https://sonarcloud.io/summary/overall?id=robtimus%3Atext-obfuscation)
+[![Known Vulnerabilities](https://snyk.io/test/github/robtimus/text-obfuscation/badge.svg)](https://snyk.io/test/github/robtimus/text-obfuscation)
 
 Provides functionality for obfuscating text. This can be useful for logging information that contains sensitive information.
 
