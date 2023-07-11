@@ -73,8 +73,8 @@ export function newPropertyObfuscator(
   globalProperties: GlobalPropertyObfuscatorOptions = {}
 ): PropertyObfuscator {
   // First normalize the input properties, this also allows easier case sensitive/insensitive lookups
-  const caseSensitiveProperties: { [name: string]: PropertyConfig } = {};
-  const caseInsensitiveProperties: { [name: string]: PropertyConfig } = {};
+  const caseSensitiveProperties: { [name: string]: PropertyConfig | undefined } = {};
+  const caseInsensitiveProperties: { [name: string]: PropertyConfig | undefined } = {};
   for (const propertyName in properties) {
     const property = properties[propertyName];
     let caseSensitive: boolean;
@@ -87,11 +87,11 @@ export function newPropertyObfuscator(
         matchArrays: globalProperties.matchArrays !== false,
       };
     } else {
-      caseSensitive = property.caseSensitive !== undefined ? property.caseSensitive : globalProperties.caseSensitive !== false;
+      caseSensitive = property.caseSensitive ?? globalProperties.caseSensitive !== false;
       propertyConfig = {
         obfuscate: property.obfuscate,
-        matchObjects: property.matchObjects !== undefined ? property.matchObjects : globalProperties.matchObjects !== false,
-        matchArrays: property.matchArrays !== undefined ? property.matchArrays : globalProperties.matchArrays !== false,
+        matchObjects: property.matchObjects ?? globalProperties.matchObjects !== false,
+        matchArrays: property.matchArrays ?? globalProperties.matchArrays !== false,
       };
     }
     if (caseSensitive) {
@@ -102,7 +102,7 @@ export function newPropertyObfuscator(
   }
 
   function obfuscateProperty(propertyName: string, value: string): string {
-    const config = caseSensitiveProperties[propertyName] || caseInsensitiveProperties[propertyName.toLowerCase()];
+    const config = caseSensitiveProperties[propertyName] ?? caseInsensitiveProperties[propertyName.toLowerCase()];
     const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : obfuscateNone;
     return obfuscator(value);
   }
@@ -110,7 +110,7 @@ export function newPropertyObfuscator(
     o = JSON.parse(JSON.stringify(o));
     traverse(o).forEach(function (v) {
       if (this.key) {
-        const config = caseSensitiveProperties[this.key] || caseInsensitiveProperties[this.key.toLowerCase()];
+        const config = caseSensitiveProperties[this.key] ?? caseInsensitiveProperties[this.key.toLowerCase()];
         if (config) {
           if (this.isLeaf) {
             if (config.obfuscate !== "ignore") {
