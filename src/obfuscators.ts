@@ -94,7 +94,7 @@ export interface ObfuscatePortionOptions {
 
 export function obfuscatePortion(options: ObfuscatePortionOptions): Obfuscator {
   function validateNonNegativeNumber(value: number | undefined, name: string): number {
-    value = value || 0;
+    value = value ?? 0;
     if (value < 0) {
       throw new Error(`${name}: ${value} < 0`);
     }
@@ -106,7 +106,7 @@ export function obfuscatePortion(options: ObfuscatePortionOptions): Obfuscator {
   const atLeastFromStart = validateNonNegativeNumber(options.atLeastFromStart, "atLeastFromStart");
   const atLeastFromEnd = validateNonNegativeNumber(options.atLeastFromEnd, "atLeastFromEnd");
   const fixedTotalLength = options.fixedTotalLength;
-  const maskChar = options.maskChar || "*";
+  const maskChar = options.maskChar ?? "*";
 
   if (fixedTotalLength !== undefined && fixedTotalLength < keepAtStart + keepAtEnd) {
     throw new Error(`fixedTotalLength (${fixedTotalLength}) < keepAtStart (${keepAtStart}) + keepAtEnd (${keepAtEnd})`);
