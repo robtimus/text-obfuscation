@@ -55,7 +55,7 @@ Useful for obfuscating values like credit card numbers.
 
 ```
 const obfuscator = obfuscatePortion({
-  keepAtEnd: 4
+  keepAtEnd: 4,
 });
 const obfuscated = obfuscator("1234567890123456");
 // obfuscated is "************3456"
@@ -66,7 +66,7 @@ It’s advised to use `atLeastFromStart`, to make sure that values of fewer than
 ```
 const obfuscator = obfuscatePortion({
   keepAtEnd: 4,
-  atLeastFromStart: 12
+  atLeastFromStart: 12,
 });
 const obfuscated = obfuscator("1234567890");
 // obfuscated is "**********" and not "******7890"
@@ -79,7 +79,7 @@ Useful for obfuscating values like zip codes, where the first part is not as sen
 ```
 const obfuscator = obfuscatePortion({
   keepAtStart: Number.MAX_VALUE,
-  atLeastFromEnd: 2
+  atLeastFromEnd: 2,
 });
 const obfuscated = obfuscator("SW1A 2AA");
 // obfuscated is "SW1A 2**"
@@ -95,7 +95,7 @@ Similar to using `obfuscateAll`, by default an obfuscator built using `obfuscate
 const obfuscator = obfuscatePortion({
   keepAtStart: 2,
   keepAtEnd: 2,
-  fixedTotalLength: 6
+  fixedTotalLength: 6,
 });
 let obfuscated = obfuscator("Hello World");
 // obfuscated is "He**ld"
@@ -132,7 +132,7 @@ Sometimes the obfucators in this library alone cannot perform the obfuscation yo
 ```
 const obfuscator = obfuscatePortion({
   keepAtStart: 4,
-  keepAtEnd: 4
+  keepAtEnd: 4,
 });
 const obfuscated = obfuscator("1234567890123456");
 // obfuscated is "1234********3456"
@@ -164,10 +164,47 @@ With this chaining, it’s now possible to keep the first and last 4 characters,
 const obfuscator = obfuscateNone.untilLength(4)
   .then(obfuscatePortion({
     keepAtEnd: 4,
-    atLeastFromStart: 8
+    atLeastFromStart: 8,
   }));
 const obfuscated = obfuscator("12345678901234");
 // obfuscated is "1234********34"
+```
+
+### Splitting text during obfuscation
+
+To make it easier to create obfuscators for structured text like email addresses, use a `SplitPoint`. Three implementations are provided :
+* `atFirst(s)` splits at the first occurrence of string `s`.
+* `atLast(s)` splits at the last occurrence of string `s`.
+* `atNth(s, occurrence)` splits at the zero-based specified occurrence of string `s`.
+
+For instance:
+
+```
+// Keep the domain as-is
+const localPartObfuscator = obfuscatePortion({
+  keepAtStart: 1,
+  keepAtEnd: 1,
+  fixedTotalLength: 8,
+});
+const domainObfuscator = obfuscateNone;
+const obfuscator = atFirst("@").splitTo(localPartObfuscator, domainObfuscator);
+const obfuscated = obfuscator("test@example.org");
+// obfuscated is "t******t@example.org"
+```
+
+To obfuscate the domain except for the TLD, use a nested `SplitPoint`:
+
+```
+// Keep only the TLD of the domain
+const localPartObfuscator = obfuscatePortion({
+  keepAtStart: 1,
+  keepAtEnd: 1,
+  fixedTotalLength: 8,
+});
+const domainObfuscator = atLast(".").splitTo(obfuscateAll(), obfuscateNone);
+const obfuscator = atFirst("@").splitTo(localPartObfuscator, domainObfuscator);
+const obfuscated = obfuscator("test@example.org");
+// obfuscated is "t******t@*******.org"
 ```
 
 ## Obfuscating object properties
@@ -178,7 +215,7 @@ The simplest form provides an obfucator function for each property to obfuscate:
 
 ```
 const propertyObfuscator = newPropertyObfuscator({
-  password: obfuscateWithFixedLength(3)
+  password: obfuscateWithFixedLength(3),
 });
 const obfuscatedPassword = propertyObfuscator("password", "admin1234");
 // obfuscatedPassword is "***"
@@ -186,7 +223,7 @@ const obfuscatedUsername = propertyObfuscator("username", "admin");
 // obfuscatedUsername is "admin"
 const obfuscatedObject = propertyObfuscator({
   username: "admin",
-  password: "admin1234"
+  password: "admin1234",
 });
 // obfuscatedObject is { username: "admin", password: "***" }
 ```
@@ -200,7 +237,7 @@ const propertyObfuscator = newPropertyObfuscator({
     obfuscate: obfuscateWithFixedLength(3),
     caseSensitive: false // defaults to true
     matchObjects: false, // defaults to true
-    matchArrays: false // defaults to true
+    matchArrays: false, // defaults to true
   }
 });
 ```
@@ -211,7 +248,7 @@ const propertyObfuscator = newPropertyObfuscator({
 }, {
   caseSensitive: false // defaults to true
   matchObjects: false, // defaults to true
-  matchArrays: false // defaults to true
+  matchArrays: false, // defaults to true
 });
 ```
 
@@ -223,7 +260,7 @@ Use `newHeaderObfuscator` to create a function that can obfuscate single HTTP he
 
 ```
 const headerObfuscator = newHeaderObfuscator({
-  Authorization: obfuscateWithFixedLength(3)
+  Authorization: obfuscateWithFixedLength(3),
 });
 const obfuscatedAuthorization = headerObfuscator("authorization", "Bearer someToken");
 // obfuscatedAuthorization is "***"
@@ -233,7 +270,7 @@ const obfuscatedContentType = headerObfuscator("Content-Type", "application/json
 // obfuscatedContentType is "application/json"
 const obfuscatedHeaders = headerObfuscator({
   authorization: "Bearer someToken",
-  "content-type": "application/json"
+  "content-type": "application/json",
 });
 // obfuscatedHeaders is { authorization: "***", "content-type": "application/json" }
 ```
