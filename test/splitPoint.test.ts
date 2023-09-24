@@ -1,4 +1,4 @@
-import { atFirst, atLast, atNth, obfuscateAll, obfuscateWithFixedLength, obfuscateWithFixedValue } from "../src";
+import { atFirst, atLast, atNth, obfuscateAll, obfuscateWithFixedLength, obfuscateWithFixedValue, newSplitPoint } from "../src";
 
 describe("atFirst('@')", () => {
   describe("splitTo(obfuscateAll(), obfuscateWithFixedLength(5))", () => {
@@ -91,6 +91,31 @@ describe("atNth('.', 2)", () => {
       ["alpha.bravo.charlie.delta", "xxx.*****"],
       ["alpha.bravo.charlie.delta.echo", "xxx.*****"],
       ["........", "xxx.*****"],
+    ];
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
+      expect(obfuscated).toBe(expected);
+    });
+  });
+});
+
+describe("splitPoint", () => {
+  it("negative split length", () => {
+    expect(() => newSplitPoint(() => 0, -1)).toThrowError("-1 < 0");
+  });
+
+  describe("zero length", () => {
+    const obfuscator = newSplitPoint((text) => {
+      const index = text.indexOf("@");
+      return index === -1 ? text.length : index;
+    }, 0).splitTo(obfuscateAll(), obfuscateWithFixedLength(5, "x"));
+    const cases = [
+      ["test", "****"],
+      ["test@", "****xxxxx"],
+      ["test@example.org", "****xxxxx"],
+      ["test@example.org@", "****xxxxx"],
+      ["test@example.org@localhost", "****xxxxx"],
+      ["", ""],
     ];
     it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
       const obfuscated = obfuscator(text);
