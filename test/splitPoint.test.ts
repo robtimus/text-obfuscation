@@ -105,10 +105,7 @@ describe("splitPoint", () => {
   });
 
   describe("zero length", () => {
-    const obfuscator = newSplitPoint((text) => {
-      const index = text.indexOf("@");
-      return index === -1 ? text.length : index;
-    }, 0).splitTo(obfuscateAll(), obfuscateWithFixedLength(5, "x"));
+    const obfuscator = newSplitPoint((text) => text.indexOf("@"), 0).splitTo(obfuscateAll(), obfuscateWithFixedLength(5, "x"));
     const cases = [
       ["test", "****"],
       ["test@", "****xxxxx"],
@@ -116,6 +113,38 @@ describe("splitPoint", () => {
       ["test@example.org@", "****xxxxx"],
       ["test@example.org@localhost", "****xxxxx"],
       ["", ""],
+    ];
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
+      expect(obfuscated).toBe(expected);
+    });
+  });
+
+  describe("split at start", () => {
+    const obfuscator = newSplitPoint(() => 0, 0).splitTo(obfuscateWithFixedLength(3), obfuscateAll("x"));
+    const cases = [
+      ["test", "***xxxx"],
+      ["test@", "***xxxxx"],
+      ["test@example.org", "***xxxxxxxxxxxxxxxx"],
+      ["test@example.org@", "***xxxxxxxxxxxxxxxxx"],
+      ["test@example.org@localhost", "***xxxxxxxxxxxxxxxxxxxxxxxxxx"],
+      ["", "***"],
+    ];
+    it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
+      const obfuscated = obfuscator(text);
+      expect(obfuscated).toBe(expected);
+    });
+  });
+
+  describe("split at end", () => {
+    const obfuscator = newSplitPoint((text) => text.length, 0).splitTo(obfuscateWithFixedLength(3), obfuscateWithFixedValue("xxx"));
+    const cases = [
+      ["test", "***xxx"],
+      ["test@", "***xxx"],
+      ["test@example.org", "***xxx"],
+      ["test@example.org@", "***xxx"],
+      ["test@example.org@localhost", "***xxx"],
+      ["", "***xxx"],
     ];
     it.each(cases)("applied to '%s' should be '%s'", (text, expected) => {
       const obfuscated = obfuscator(text);

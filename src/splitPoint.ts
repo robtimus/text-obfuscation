@@ -44,8 +44,7 @@ export interface SplitPoint {
  */
 export function atFirst(s: string): SplitPoint {
   function splitStart(text: string): number {
-    const index = text.indexOf(s);
-    return index === -1 ? text.length : index;
+    return text.indexOf(s);
   }
   return newSplitPoint(splitStart, s.length);
 }
@@ -56,8 +55,7 @@ export function atFirst(s: string): SplitPoint {
  */
 export function atLast(s: string): SplitPoint {
   function splitStart(text: string): number {
-    const index = text.lastIndexOf(s);
-    return index === -1 ? text.length : index;
+    return text.lastIndexOf(s);
   }
   return newSplitPoint(splitStart, s.length);
 }
@@ -76,14 +74,14 @@ export function atNth(s: string, occurrence: number): SplitPoint {
     for (let i = 1; i <= occurrence && index != -1; i++) {
       index = text.indexOf(s, index + 1);
     }
-    return index === -1 ? text.length : index;
+    return index;
   }
   return newSplitPoint(splitStart, s.length);
 }
 
 /**
  * Creates a new split point.
- * @param splitStart A function that takes a string and returns the 0-based index where to split, or the length of the string if obfuscation should not be split.
+ * @param splitStart A function that takes a string and returns the 0-based index where to split, or -1 if obfuscation should not be split.
  *                   This could for example be caused by a string to split on not being found.
  * @param splitLength The length of the split point. If not 0, the substring with this length starting at the calculated split start will not be obfuscated.
  * @throws If the given split length is negative.
@@ -102,7 +100,7 @@ export function newSplitPoint(splitStart: (text: string) => number, splitLength:
 function splitObfuscator(splitStart: (text: string) => number, splitLength: number, beforeSplitPoint: Obfuscator, afterSplitPoint: Obfuscator): Obfuscator {
   const obfuscate = (text: string): string => {
     const splitStartIndex = splitStart(text);
-    if (splitStartIndex === text.length) {
+    if (splitStartIndex === -1) {
       return beforeSplitPoint(text);
     }
     return [
