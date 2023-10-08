@@ -17,6 +17,16 @@ export interface PropertyObfuscator {
 }
 
 /**
+ * The possible ways to deal with nested objects and arrays:
+ * - `exclude` will not obfuscate nested objects or arrays, but instead will traverse into them.
+ * - `obfuscate` will obfuscate nested objects and arrays using their JSON string representations.
+ * - `inherit` will not obfuscate nested objects or arrays, but will use the obfuscator for all nested scalar properties.
+ * - `inherit-overridable` will not obfuscate nested objects or arrays, but will use the obfuscator for all nested scalar properties.
+ *   If a nested property has its own obfuscator defined this will be used instead.
+ */
+export type ObfuscationMode = "exclude" | "obfuscate" | "inherit" | "inherit-overridable";
+
+/**
  * Per-property options.
  */
 export interface PropertyOptions {
@@ -30,11 +40,21 @@ export interface PropertyOptions {
    */
   caseSensitive?: boolean;
   /**
+   * How to handle matched object properties. Overrides any globally set value.
+   */
+  forObjects?: ObfuscationMode;
+  /**
+   * How to handle matched array properties. Overrides any globally set value.
+   */
+  forArrays?: ObfuscationMode;
+  /**
    * whether or not to match object properties. Overrides any globally set value.
+   * @deprecated Use `forObjects` instead.
    */
   matchObjects?: boolean;
   /**
    * whether or not to match array properties. Overrides any globally set value.
+   * @deprecated Use `forArrays` instead.
    */
   matchArrays?: boolean;
 }
@@ -48,19 +68,61 @@ export interface GlobalPropertyObfuscatorOptions {
    */
   caseSensitive?: boolean;
   /**
-   * whether or not to match object properties. Defaults to true.
+   * How to handle matched object properties. Defaults to `obfuscate`.
+   */
+  forObjects?: ObfuscationMode;
+  /**
+   * How to handle matched array properties. Defaults to `obfuscate`.
+   */
+  forArrays?: ObfuscationMode;
+  /**
+   * whether or not to match object properties.
+   * @deprecated Use `forObjects` instead.
    */
   matchObjects?: boolean;
   /**
-   * whether or not to match array properties. Defaults to true.
+   * whether or not to match array properties.
+   * @deprecated Use `forArrays` instead.
    */
   matchArrays?: boolean;
 }
 
 interface PropertyConfig {
   obfuscate: ((text: string) => string) | "ignore";
-  matchObjects: boolean;
-  matchArrays: boolean;
+  forObjects: ObfuscationMode;
+  forArrays: ObfuscationMode;
+}
+
+function forObjects(options: PropertyOptions | GlobalPropertyObfuscatorOptions): ObfuscationMode | undefined {
+  return toObfuscationMode(options.forObjects, options.matchObjects, "Cannot use both forObjects and matchObjects");
+}
+
+function forArrays(options: PropertyOptions | GlobalPropertyObfuscatorOptions): ObfuscationMode | undefined {
+  return toObfuscationMode(options.forArrays, options.matchArrays, "Cannot use both forArrays and matchArrays");
+}
+
+function toObfuscationMode(obfuscationMode: ObfuscationMode | undefined, match: boolean | undefined, errorMessage: string): ObfuscationMode | undefined {
+  if (obfuscationMode && match !== undefined) {
+    throw new Error(errorMessage);
+  }
+  if (match === true) {
+    return "obfuscate";
+  }
+  if (match === false) {
+    return "exclude";
+  }
+  return obfuscationMode;
+}
+
+function obfuscationMode(value?: ObfuscationMode, fallbackValue?: ObfuscationMode): ObfuscationMode {
+  if (value) {
+    return value;
+  }
+  return obfuscationMode(fallbackValue, "obfuscate");
+}
+
+function isScalar(v: unknown): boolean {
+  return v === undefined || v === null || typeof v !== "object";
 }
 
 /**
@@ -83,15 +145,15 @@ export function newPropertyObfuscator(
       caseSensitive = globalProperties.caseSensitive !== false;
       propertyConfig = {
         obfuscate: property,
-        matchObjects: globalProperties.matchObjects !== false,
-        matchArrays: globalProperties.matchArrays !== false,
+        forObjects: obfuscationMode(forObjects(globalProperties)),
+        forArrays: obfuscationMode(forArrays(globalProperties)),
       };
     } else {
       caseSensitive = property.caseSensitive ?? globalProperties.caseSensitive !== false;
       propertyConfig = {
         obfuscate: property.obfuscate,
-        matchObjects: property.matchObjects ?? globalProperties.matchObjects !== false,
-        matchArrays: property.matchArrays ?? globalProperties.matchArrays !== false,
+        forObjects: obfuscationMode(forObjects(property), forObjects(globalProperties)),
+        forArrays: obfuscationMode(forArrays(property), forArrays(globalProperties)),
       };
     }
     if (caseSensitive) {
@@ -106,29 +168,54 @@ export function newPropertyObfuscator(
     const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : obfuscateNone;
     return obfuscator(value);
   }
-  function obfuscateObject(o: object): object {
-    o = JSON.parse(JSON.stringify(o));
+  function obfuscateScalars(o: object, obfuscate: ((text: string) => string) | "ignore"): void {
+    if (obfuscate !== "ignore") {
+      traverse(o).forEach(function (v) {
+        if (this.key && this.isLeaf && isScalar(v)) {
+          this.update(obfuscate("" + v));
+        }
+      });
+    }
+  }
+  function obfuscateWithDefault(o: object, obfuscateDefault?: ((text: string) => string) | "ignore"): void {
     traverse(o).forEach(function (v) {
       if (this.key) {
         const config = caseSensitiveProperties[this.key] ?? caseInsensitiveProperties[this.key.toLowerCase()];
-        if (config) {
-          if (this.isLeaf) {
-            if (config.obfuscate !== "ignore") {
-              this.update(config.obfuscate("" + v));
+        const obfuscate = config?.obfuscate ?? obfuscateDefault;
+        if (obfuscate) {
+          if (this.isLeaf && isScalar(v)) {
+            if (obfuscate !== "ignore") {
+              this.update(obfuscate("" + v));
             }
           } else {
-            const match = Array.isArray(v) ? config.matchArrays : config.matchObjects;
-            if (match) {
-              if (config.obfuscate === "ignore") {
+            const obfuscationMode = Array.isArray(v) ? config?.forArrays : config?.forObjects;
+            switch (obfuscationMode) {
+              case "exclude":
+                // Continue with traversal
+                break;
+              case "inherit":
+                obfuscateScalars(v, obfuscate);
                 this.block();
-              } else {
-                this.update(config.obfuscate(JSON.stringify(v)));
-              }
+                break;
+              case "inherit-overridable":
+              case undefined: // config is undefined, which means obfuscateDefault is used, which means this path got triggered from another inherit-overridable config
+                obfuscateWithDefault(v, obfuscate);
+                this.block();
+                break;
+              case "obfuscate":
+                if (obfuscate !== "ignore") {
+                  this.update(obfuscate(JSON.stringify(v)));
+                }
+                this.block();
             }
           }
         }
       }
     });
+  }
+  function obfuscateObject(o: object): object {
+    o = JSON.parse(JSON.stringify(o));
+    obfuscateWithDefault(o);
     return o;
   }
 

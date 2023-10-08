@@ -141,21 +141,71 @@ describe("Splitting text during obfuscation", () => {
   });
 });
 
-it("Obfuscating object properties", () => {
-  const propertyObfuscator = newPropertyObfuscator({
-    password: obfuscateWithFixedLength(3),
+describe("Obfuscating object properties", () => {
+  it("configured with obfuscators", () => {
+    const propertyObfuscator = newPropertyObfuscator({
+      password: obfuscateWithFixedLength(3),
+    });
+    const obfuscatedPassword = propertyObfuscator("password", "admin1234");
+    expect(obfuscatedPassword).toBe("***");
+    const obfuscatedUsername = propertyObfuscator("username", "admin");
+    expect(obfuscatedUsername).toBe("admin");
+    const obfuscatedObject = propertyObfuscator({
+      username: "admin",
+      password: "admin1234",
+    });
+    expect(obfuscatedObject).toStrictEqual({
+      username: "admin",
+      password: "***",
+    });
   });
-  const obfuscatedPassword = propertyObfuscator("password", "admin1234");
-  expect(obfuscatedPassword).toBe("***");
-  const obfuscatedUsername = propertyObfuscator("username", "admin");
-  expect(obfuscatedUsername).toBe("admin");
-  const obfuscatedObject = propertyObfuscator({
-    username: "admin",
-    password: "admin1234",
+
+  it("configured with property options", () => {
+    const propertyObfuscator = newPropertyObfuscator({
+      password: {
+        obfuscate: obfuscateWithFixedLength(3),
+        caseSensitive: false, // defaults to true
+        forObjects: "exclude", // defaults to "obfuscate"
+        forArrays: "exclude", // defaults to "obfuscate"
+      },
+    });
+    const obfuscatedPassword = propertyObfuscator("password", "admin1234");
+    expect(obfuscatedPassword).toBe("***");
+    const obfuscatedUsername = propertyObfuscator("username", "admin");
+    expect(obfuscatedUsername).toBe("admin");
+    const obfuscatedObject = propertyObfuscator({
+      username: "admin",
+      password: "admin1234",
+    });
+    expect(obfuscatedObject).toStrictEqual({
+      username: "admin",
+      password: "***",
+    });
   });
-  expect(obfuscatedObject).toStrictEqual({
-    username: "admin",
-    password: "***",
+
+  it("configured with global options", () => {
+    const propertyObfuscator = newPropertyObfuscator(
+      {
+        password: obfuscateWithFixedLength(3),
+      },
+      {
+        caseSensitive: false, // defaults to true
+        forObjects: "exclude", // defaults to "obfuscate"
+        forArrays: "exclude", // defaults to "obfuscate"
+      }
+    );
+    const obfuscatedPassword = propertyObfuscator("password", "admin1234");
+    expect(obfuscatedPassword).toBe("***");
+    const obfuscatedUsername = propertyObfuscator("username", "admin");
+    expect(obfuscatedUsername).toBe("admin");
+    const obfuscatedObject = propertyObfuscator({
+      username: "admin",
+      password: "admin1234",
+    });
+    expect(obfuscatedObject).toStrictEqual({
+      username: "admin",
+      password: "***",
+    });
   });
 });
 

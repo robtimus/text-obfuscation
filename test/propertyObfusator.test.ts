@@ -1,4 +1,4 @@
-import { obfuscateWithFixedLength, newPropertyObfuscator } from "../src";
+import { obfuscateWithFixedLength, newPropertyObfuscator, PropertyOptions } from "../src";
 
 describe("newPropertyObfuscator", () => {
   describe("for object", () => {
@@ -105,8 +105,8 @@ describe("newPropertyObfuscator", () => {
       booleanTrue: "***",
       booleanFalse: "***",
       null: "***",
-      object: "***",
-      array: "***",
+      object: "ooo",
+      array: "aaa",
       notMatchedString: "123456",
       notMatchedInt: 123456,
       notMatchedFloat: 1234.56,
@@ -129,8 +129,8 @@ describe("newPropertyObfuscator", () => {
           booleanTrue: "***",
           booleanFalse: "***",
           null: "***",
-          object: "***",
-          array: "***",
+          object: "ooo",
+          array: "aaa",
           notMatchedString: "123456",
           notMatchedInt: 123456,
           notMatchedFloat: 1234.56,
@@ -265,6 +265,198 @@ describe("newPropertyObfuscator", () => {
       },
     };
 
+    const expectedObfuscatingInherited = {
+      string: "***",
+      int: "***",
+      float: "***",
+      booleanTrue: "***",
+      booleanFalse: "***",
+      null: "***",
+      object: {
+        string: "ooo",
+        int: "ooo",
+        float: "ooo",
+        booleanTrue: "ooo",
+        booleanFalse: "ooo",
+        null: "ooo",
+        nested: [
+          {
+            prop1: "ooo",
+            prop2: "ooo",
+          },
+        ],
+      },
+      array: [["aaa", "aaa"], {}],
+      notMatchedString: "123456",
+      notMatchedInt: 123456,
+      notMatchedFloat: 1234.56,
+      notMatchedBooleanTrue: true,
+      notMatchedBooleanFalse: false,
+      nonMatchedNull: null,
+      nonMatchedObject: {
+        notMatchedString: "123456",
+        notMatchedInt: 123456,
+        notMatchedFloat: 1234.56,
+        notMatchedBooleanTrue: true,
+        notMatchedBooleanFalse: false,
+        nonMatchedNull: null,
+      },
+      nested: [
+        {
+          string: "***",
+          int: "***",
+          float: "***",
+          booleanTrue: "***",
+          booleanFalse: "***",
+          null: "***",
+          object: {
+            string: "ooo",
+            int: "ooo",
+            float: "ooo",
+            booleanTrue: "ooo",
+            booleanFalse: "ooo",
+            nested: [
+              {
+                prop1: "ooo",
+                prop2: "ooo",
+              },
+            ],
+          },
+          array: [["aaa", "aaa"], {}],
+          notMatchedString: "123456",
+          notMatchedInt: 123456,
+          notMatchedFloat: 1234.56,
+          notMatchedBooleanTrue: true,
+          notMatchedBooleanFalse: false,
+          nonMatchedNull: null,
+        },
+      ],
+      notObfuscated: {
+        string: 'string"int',
+        int: 123456,
+        float: 1234.56,
+        booleanTrue: true,
+        booleanFalse: false,
+        null: null,
+        object: {
+          string: 'string"int',
+          int: 123456,
+          float: 1234.56,
+          booleanTrue: true,
+          booleanFalse: false,
+          nested: [
+            {
+              prop1: "1",
+              prop2: "2",
+            },
+          ],
+        },
+        array: [["1", "2"], {}],
+        notMatchedString: "123456",
+        notMatchedInt: 123456,
+        notMatchedFloat: 1234.56,
+        notMatchedBooleanTrue: true,
+        notMatchedBooleanFalse: false,
+        nonMatchedNull: null,
+      },
+    };
+
+    const expectedObfuscatingInheritedOverridable = {
+      string: "***",
+      int: "***",
+      float: "***",
+      booleanTrue: "***",
+      booleanFalse: "***",
+      null: "***",
+      object: {
+        string: "***",
+        int: "***",
+        float: "***",
+        booleanTrue: "***",
+        booleanFalse: "***",
+        null: "***",
+        nested: [
+          {
+            prop1: "ooo",
+            prop2: "ooo",
+          },
+        ],
+      },
+      array: [["aaa", "aaa"], {}],
+      notMatchedString: "123456",
+      notMatchedInt: 123456,
+      notMatchedFloat: 1234.56,
+      notMatchedBooleanTrue: true,
+      notMatchedBooleanFalse: false,
+      nonMatchedNull: null,
+      nonMatchedObject: {
+        notMatchedString: "123456",
+        notMatchedInt: 123456,
+        notMatchedFloat: 1234.56,
+        notMatchedBooleanTrue: true,
+        notMatchedBooleanFalse: false,
+        nonMatchedNull: null,
+      },
+      nested: [
+        {
+          string: "***",
+          int: "***",
+          float: "***",
+          booleanTrue: "***",
+          booleanFalse: "***",
+          null: "***",
+          object: {
+            string: "***",
+            int: "***",
+            float: "***",
+            booleanTrue: "***",
+            booleanFalse: "***",
+            nested: [
+              {
+                prop1: "ooo",
+                prop2: "ooo",
+              },
+            ],
+          },
+          array: [["aaa", "aaa"], {}],
+          notMatchedString: "123456",
+          notMatchedInt: 123456,
+          notMatchedFloat: 1234.56,
+          notMatchedBooleanTrue: true,
+          notMatchedBooleanFalse: false,
+          nonMatchedNull: null,
+        },
+      ],
+      notObfuscated: {
+        string: "***",
+        int: "***",
+        float: "***",
+        booleanTrue: "***",
+        booleanFalse: "***",
+        null: "***",
+        object: {
+          string: "***",
+          int: "***",
+          float: "***",
+          booleanTrue: "***",
+          booleanFalse: "***",
+          nested: [
+            {
+              prop1: "ooo",
+              prop2: "ooo",
+            },
+          ],
+        },
+        array: [["aaa", "aaa"], {}],
+        notMatchedString: "123456",
+        notMatchedInt: 123456,
+        notMatchedFloat: 1234.56,
+        notMatchedBooleanTrue: true,
+        notMatchedBooleanFalse: false,
+        nonMatchedNull: null,
+      },
+    };
+
     it("globally case sensitive", () => {
       const obfuscator = obfuscateWithFixedLength(3);
       const propertyObfuscator = newPropertyObfuscator(
@@ -274,8 +466,8 @@ describe("newPropertyObfuscator", () => {
           float: obfuscator,
           booleanTrue: obfuscator,
           booleanFalse: obfuscator,
-          object: obfuscator,
-          array: obfuscator,
+          object: obfuscateWithFixedLength(3, "o"),
+          array: obfuscateWithFixedLength(3, "a"),
           null: obfuscator,
           notObfuscated: "ignore",
         },
@@ -297,8 +489,8 @@ describe("newPropertyObfuscator", () => {
           FLOAT: obfuscator,
           BOOLEANTRUE: obfuscator,
           BOOLEANFALSE: obfuscator,
-          OBJECT: obfuscator,
-          ARRAY: obfuscator,
+          OBJECT: obfuscateWithFixedLength(3, "o"),
+          ARRAY: obfuscateWithFixedLength(3, "a"),
           NULL: obfuscator,
           NOTOBFUSCATED: "ignore",
         },
@@ -311,7 +503,7 @@ describe("newPropertyObfuscator", () => {
       expect(obfuscated).toEqual(expectedObfucatingAll);
     });
 
-    it("globally matching objects and arrays", () => {
+    it("globally obfuscating objects and arrays", () => {
       const obfuscator = obfuscateWithFixedLength(3);
       const propertyObfuscator = newPropertyObfuscator(
         {
@@ -320,14 +512,14 @@ describe("newPropertyObfuscator", () => {
           float: obfuscator,
           booleanTrue: obfuscator,
           booleanFalse: obfuscator,
-          object: obfuscator,
-          array: obfuscator,
+          object: obfuscateWithFixedLength(3, "o"),
+          array: obfuscateWithFixedLength(3, "a"),
           null: obfuscator,
           notObfuscated: "ignore",
         },
         {
-          matchObjects: true,
-          matchArrays: true,
+          forObjects: "obfuscate",
+          forArrays: "obfuscate",
         }
       );
 
@@ -335,12 +527,12 @@ describe("newPropertyObfuscator", () => {
       expect(obfuscated).toEqual(expectedObfucatingAll);
     });
 
-    it("matching objects and arrays overriding globals", () => {
+    it("obfuscating objects and arrays overriding globals", () => {
       const obfuscator = obfuscateWithFixedLength(3);
-      const propertyConfig = {
+      const propertyConfig: PropertyOptions = {
         obfuscate: obfuscator,
-        matchObjects: true,
-        matchArrays: true,
+        forObjects: "obfuscate",
+        forArrays: "obfuscate",
       };
       const objecObfuscator = newPropertyObfuscator(
         {
@@ -349,18 +541,26 @@ describe("newPropertyObfuscator", () => {
           float: propertyConfig,
           booleanTrue: propertyConfig,
           booleanFalse: propertyConfig,
-          object: propertyConfig,
-          array: propertyConfig,
+          object: {
+            obfuscate: obfuscateWithFixedLength(3, "o"),
+            forObjects: "obfuscate",
+            forArrays: "obfuscate",
+          },
+          array: {
+            obfuscate: obfuscateWithFixedLength(3, "a"),
+            forObjects: "obfuscate",
+            forArrays: "obfuscate",
+          },
           null: propertyConfig,
           notObfuscated: {
             obfuscate: "ignore",
-            matchObjects: true,
-            matchArrays: true,
+            forObjects: "obfuscate",
+            forArrays: "obfuscate",
           },
         },
         {
-          matchObjects: false,
-          matchArrays: false,
+          forObjects: "exclude",
+          forArrays: "exclude",
         }
       );
 
@@ -368,7 +568,7 @@ describe("newPropertyObfuscator", () => {
       expect(obfuscated).toEqual(expectedObfucatingAll);
     });
 
-    it("globally not matching objects and arrays", () => {
+    it("globally excluding objects and arrays", () => {
       const obfuscator = obfuscateWithFixedLength(3);
       const propertyObfuscator = newPropertyObfuscator(
         {
@@ -377,14 +577,14 @@ describe("newPropertyObfuscator", () => {
           float: obfuscator,
           booleanTrue: obfuscator,
           booleanFalse: obfuscator,
-          object: obfuscator,
-          array: obfuscator,
+          object: obfuscateWithFixedLength(3, "o"),
+          array: obfuscateWithFixedLength(3, "a"),
           null: obfuscator,
           notObfuscated: "ignore",
         },
         {
-          matchObjects: false,
-          matchArrays: false,
+          forObjects: "exclude",
+          forArrays: "exclude",
         }
       );
 
@@ -392,12 +592,12 @@ describe("newPropertyObfuscator", () => {
       expect(obfuscated).toEqual(expectedObfuscatingLeafs);
     });
 
-    it("not matching objects and arrays overriding globals", () => {
+    it("excluding objects and arrays overriding globals", () => {
       const obfuscator = obfuscateWithFixedLength(3);
-      const propertyConfig = {
+      const propertyConfig: PropertyOptions = {
         obfuscate: obfuscator,
-        matchObjects: false,
-        matchArrays: false,
+        forObjects: "exclude",
+        forArrays: "exclude",
       };
       const propertyObfuscator = newPropertyObfuscator(
         {
@@ -406,23 +606,101 @@ describe("newPropertyObfuscator", () => {
           float: propertyConfig,
           booleanTrue: propertyConfig,
           booleanFalse: propertyConfig,
-          object: propertyConfig,
-          array: propertyConfig,
+          object: {
+            obfuscate: obfuscateWithFixedLength(3, "o"),
+            forObjects: "exclude",
+            forArrays: "exclude",
+          },
+          array: {
+            obfuscate: obfuscateWithFixedLength(3, "a"),
+            forObjects: "exclude",
+            forArrays: "exclude",
+          },
           null: propertyConfig,
           notObfuscated: {
             obfuscate: "ignore",
-            matchObjects: false,
-            matchArrays: false,
+            forObjects: "exclude",
+            forArrays: "exclude",
           },
         },
         {
-          matchObjects: true,
-          matchArrays: true,
+          forObjects: "obfuscate",
+          forArrays: "obfuscate",
         }
       );
 
       const obfuscated = propertyObfuscator(input);
       expect(obfuscated).toEqual(expectedObfuscatingLeafs);
+    });
+
+    it("inherited obfuscators", () => {
+      const obfuscator = obfuscateWithFixedLength(3);
+      const propertyConfig: PropertyOptions = {
+        obfuscate: obfuscator,
+        forObjects: "inherit",
+        forArrays: "inherit",
+      };
+      const propertyObfuscator = newPropertyObfuscator({
+        string: propertyConfig,
+        int: propertyConfig,
+        float: propertyConfig,
+        booleanTrue: propertyConfig,
+        booleanFalse: propertyConfig,
+        object: {
+          obfuscate: obfuscateWithFixedLength(3, "o"),
+          forObjects: "inherit",
+          forArrays: "inherit",
+        },
+        array: {
+          obfuscate: obfuscateWithFixedLength(3, "a"),
+          forObjects: "inherit",
+          forArrays: "inherit",
+        },
+        null: propertyConfig,
+        notObfuscated: {
+          obfuscate: "ignore",
+          forObjects: "inherit",
+          forArrays: "inherit",
+        },
+      });
+
+      const obfuscated = propertyObfuscator(input);
+      expect(obfuscated).toEqual(expectedObfuscatingInherited);
+    });
+
+    it("overridable inherited obfuscators", () => {
+      const obfuscator = obfuscateWithFixedLength(3);
+      const propertyConfig: PropertyOptions = {
+        obfuscate: obfuscator,
+        forObjects: "inherit-overridable",
+        forArrays: "inherit-overridable",
+      };
+      const propertyObfuscator = newPropertyObfuscator({
+        string: propertyConfig,
+        int: propertyConfig,
+        float: propertyConfig,
+        booleanTrue: propertyConfig,
+        booleanFalse: propertyConfig,
+        object: {
+          obfuscate: obfuscateWithFixedLength(3, "o"),
+          forObjects: "inherit-overridable",
+          forArrays: "inherit-overridable",
+        },
+        array: {
+          obfuscate: obfuscateWithFixedLength(3, "a"),
+          forObjects: "inherit-overridable",
+          forArrays: "inherit-overridable",
+        },
+        null: propertyConfig,
+        notObfuscated: {
+          obfuscate: "ignore",
+          forObjects: "inherit-overridable",
+          forArrays: "inherit-overridable",
+        },
+      });
+
+      const obfuscated = propertyObfuscator(input);
+      expect(obfuscated).toEqual(expectedObfuscatingInheritedOverridable);
     });
   });
 
@@ -470,6 +748,169 @@ describe("newPropertyObfuscator", () => {
       it.each(cases)("for propertyName '%s' should obfuscate '%s' to '%s'", (propertyName, text, expected) => {
         const obfuscated = propertyObfuscator(propertyName, text);
         expect(obfuscated).toBe(expected);
+      });
+    });
+  });
+
+  describe("legacy mode", () => {
+    const input = {
+      object: {
+        string: "s",
+      },
+      array: [1, 2],
+    };
+
+    describe("forObjects", () => {
+      it("neither forObjects nor matchObjects given", () => {
+        const propertyObfuscator = newPropertyObfuscator({
+          object: {
+            obfuscate: obfuscateWithFixedLength(3),
+          },
+        });
+        const obfuscated = propertyObfuscator(input);
+        expect(obfuscated).toStrictEqual({
+          object: "***",
+          array: [1, 2],
+        });
+      });
+
+      it("only forObjects given", () => {
+        const propertyObfuscator = newPropertyObfuscator({
+          object: {
+            obfuscate: obfuscateWithFixedLength(3),
+            forObjects: "inherit",
+          },
+        });
+        const obfuscated = propertyObfuscator(input);
+        expect(obfuscated).toStrictEqual({
+          object: {
+            string: "***",
+          },
+          array: [1, 2],
+        });
+      });
+
+      describe("only matchObjects given", () => {
+        it("as true", () => {
+          const propertyObfuscator = newPropertyObfuscator({
+            object: {
+              obfuscate: obfuscateWithFixedLength(3),
+              matchObjects: true,
+            },
+          });
+          const obfuscated = propertyObfuscator(input);
+          expect(obfuscated).toStrictEqual({
+            object: "***",
+            array: [1, 2],
+          });
+        });
+
+        it("as false", () => {
+          const propertyObfuscator = newPropertyObfuscator({
+            object: {
+              obfuscate: obfuscateWithFixedLength(3),
+              matchObjects: false,
+            },
+          });
+          const obfuscated = propertyObfuscator(input);
+          expect(obfuscated).toStrictEqual({
+            object: {
+              string: "s",
+            },
+            array: [1, 2],
+          });
+        });
+      });
+
+      it("both forObjects and matchObjects given", () => {
+        expect(() =>
+          newPropertyObfuscator({
+            object: {
+              obfuscate: obfuscateWithFixedLength(3),
+              forObjects: "inherit",
+              matchObjects: true,
+            },
+          })
+        ).toThrowError("Cannot use both forObjects and matchObjects");
+      });
+    });
+
+    describe("forArrays", () => {
+      it("neither forArrays nor matchArrays given", () => {
+        const propertyObfuscator = newPropertyObfuscator({
+          array: {
+            obfuscate: obfuscateWithFixedLength(3),
+          },
+        });
+        const obfuscated = propertyObfuscator(input);
+        expect(obfuscated).toStrictEqual({
+          object: {
+            string: "s",
+          },
+          array: "***",
+        });
+      });
+
+      it("only forArrays given", () => {
+        const propertyObfuscator = newPropertyObfuscator({
+          array: {
+            obfuscate: obfuscateWithFixedLength(3),
+            forArrays: "inherit",
+          },
+        });
+        const obfuscated = propertyObfuscator(input);
+        expect(obfuscated).toStrictEqual({
+          object: {
+            string: "s",
+          },
+          array: ["***", "***"],
+        });
+      });
+
+      describe("only matchArrays given", () => {
+        it("as true", () => {
+          const propertyObfuscator = newPropertyObfuscator({
+            array: {
+              obfuscate: obfuscateWithFixedLength(3),
+              matchArrays: true,
+            },
+          });
+          const obfuscated = propertyObfuscator(input);
+          expect(obfuscated).toStrictEqual({
+            object: {
+              string: "s",
+            },
+            array: "***",
+          });
+        });
+
+        it("as false", () => {
+          const propertyObfuscator = newPropertyObfuscator({
+            array: {
+              obfuscate: obfuscateWithFixedLength(3),
+              matchArrays: false,
+            },
+          });
+          const obfuscated = propertyObfuscator(input);
+          expect(obfuscated).toStrictEqual({
+            object: {
+              string: "s",
+            },
+            array: [1, 2],
+          });
+        });
+      });
+
+      it("both forArrays and matchArrays given", () => {
+        expect(() =>
+          newPropertyObfuscator({
+            array: {
+              obfuscate: obfuscateWithFixedLength(3),
+              forArrays: "inherit",
+              matchArrays: true,
+            },
+          })
+        ).toThrowError("Cannot use both forArrays and matchArrays");
       });
     });
   });

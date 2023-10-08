@@ -235,9 +235,9 @@ This matches property names case sensitively, and will obfuscate any nested obje
 const propertyObfuscator = newPropertyObfuscator({
   password: {
     obfuscate: obfuscateWithFixedLength(3),
-    caseSensitive: false // defaults to true
-    matchObjects: false, // defaults to true
-    matchArrays: false, // defaults to true
+    caseSensitive: false, // defaults to true
+    forObjects: "exclude", // defaults to "obfuscate"
+    forArrays: "exclude", // defaults to "obfuscate"
   }
 });
 ```
@@ -246,11 +246,17 @@ const propertyObfuscator = newPropertyObfuscator({
 const propertyObfuscator = newPropertyObfuscator({
   password: obfuscateWithFixedLength(3)
 }, {
-  caseSensitive: false // defaults to true
-  matchObjects: false, // defaults to true
-  matchArrays: false, // defaults to true
+  caseSensitive: false, // defaults to true
+  forObjects: "exclude", // defaults to "obfuscate"
+  forArrays: "exclude", // defaults to "obfuscate"
 });
 ```
+
+In both cases, `forObjects` and `forArrays` can take the following values:
+* `"exclude"` to not match properties with object or array values; nested properties will be matched separately.
+* `"obfuscate"` to obfuscate the entire object or array using its JSON string representation.
+* `"inherit"` to obfuscate each nested scalar property value or array element using the given obfuscator.
+* `"inherit-overridable"` to obfuscate each nested scalar property value or array element using the given obfuscator; however, if a nested property has its own obfuscator defined this will be used instead.
 
 Finally, in all formats, it's possible to skip obfuscation by using `"ignore"` instead of an obfuscator function. This can be useful for skipping entire object trees.
 
