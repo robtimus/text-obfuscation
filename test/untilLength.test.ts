@@ -106,26 +106,26 @@ describe("obfuscateWithFixedLength(3).untilLength(4)", () => {
       expect(obfuscated).toBe(expected);
     });
   });
+});
 
-  describe("invalid prefix lengths", () => {
-    it("first", () => {
-      const obfuscator = obfuscateNone;
-      expect(() => obfuscator.untilLength(0)).toThrow("0 <= 0");
-    });
+describe("invalid prefix lengths", () => {
+  it("first", () => {
+    const obfuscator = obfuscateNone;
+    expect(() => obfuscator.untilLength(0)).toThrow("0 <= 0");
+  });
 
-    it("second", () => {
-      const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll());
-      expect(() => obfuscator.untilLength(1)).toThrow("1 <= 1");
-    });
+  it("second", () => {
+    const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll());
+    expect(() => obfuscator.untilLength(1)).toThrow("1 <= 1");
+  });
 
-    it("third", () => {
-      const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll()).untilLength(2).then(obfuscateNone);
-      expect(() => obfuscator.untilLength(2)).toThrow("2 <= 2");
-    });
+  it("third", () => {
+    const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll()).untilLength(2).then(obfuscateNone);
+    expect(() => obfuscator.untilLength(2)).toThrow("2 <= 2");
+  });
 
-    it("fourth", () => {
-      const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll()).untilLength(2).then(obfuscateNone).untilLength(3).then(obfuscateAll());
-      expect(() => obfuscator.untilLength(3)).toThrow("3 <= 3");
-    });
+  it("fourth", () => {
+    const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll()).untilLength(2).then(obfuscateNone).untilLength(3).then(obfuscateAll());
+    expect(() => obfuscator.untilLength(3)).toThrow("3 <= 3");
   });
 });

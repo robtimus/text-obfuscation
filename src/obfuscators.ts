@@ -92,6 +92,9 @@ export interface ObfuscatePortionOptions {
   maskChar?: string;
 }
 
+/**
+ * @returns an immutable obfuscator that obfuscates a specific portion of its input.
+ */
 export function obfuscatePortion(options: ObfuscatePortionOptions): Obfuscator {
   function validateNonNegativeNumber(value: number | undefined, name: string): number {
     value = value ?? 0;

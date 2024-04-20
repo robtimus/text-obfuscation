@@ -2,7 +2,7 @@ import { Obfuscator, obfuscateCustom } from "./obfuscators";
 
 /**
  * A point in a string to split obfuscation.
- * Like {@link Obfuscator.untilLength}, this can be used to combine obfuscators. For instance, to obfuscate email addresses:
+ * Like {@link Obfuscator.untilLength} this can be used to combine obfuscators, e.g. to obfuscate email addresses.
  * Unlike {@link Obfuscator.untilLength} it's not possible to chain splitting, but it's of course possible to nest it.
  * @example
  * const localPartObfuscator = obfuscatePortion({
