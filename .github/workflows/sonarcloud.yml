@@ -53,10 +53,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SonarCloudToken }}
           SONAR_HOST_URL: https://sonarcloud.io
         with:
-          # omitted for now: -Dsonar.projectDescription=${{ env.projectDescription }}
           args: |
             -Dsonar.organization=robtimus-github
             -Dsonar.projectKey=robtimus:${{ env.projectName }}
+            "-Dsonar.projectDescription=${{ env.projectDescription }}"
             -Dsonar.links.homepage=${{ env.projectHomepage }}
             -Dsonar.links.issue=${{ env.projectBugUrl }}
             -Dsonar.links.scm=${{ env.projectRepositoryUrl }}
