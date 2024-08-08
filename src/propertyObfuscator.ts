@@ -1,4 +1,3 @@
-import traverse = require("traverse");
 import { obfuscateNone } from "./obfuscators";
 
 /**
@@ -168,62 +167,61 @@ export function newPropertyObfuscator(
     const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : obfuscateNone;
     return obfuscator(value);
   }
-  function obfuscateScalars(o: object, obfuscate: ((text: string) => string) | "ignore"): void {
-    if (obfuscate !== "ignore") {
-      traverse(o).forEach(function (v) {
-        if (this.key && this.isLeaf && isScalar(v)) {
-          this.update(obfuscate("" + v));
-        }
-      });
-    }
+  function obfuscateScalar(value: unknown, obfuscate?: ((text: string) => string) | "ignore"): unknown {
+    return obfuscate && obfuscate !== "ignore" ? obfuscate("" + value) : value;
   }
-  function obfuscateWithDefault(o: object, obfuscateDefault?: ((text: string) => string) | "ignore"): void {
-    traverse(o).forEach(function (v) {
-      if (this.key) {
-        const config = caseSensitiveProperties[this.key] ?? caseInsensitiveProperties[this.key.toLowerCase()];
-        const obfuscate = config?.obfuscate ?? obfuscateDefault;
-        if (obfuscate) {
-          if (this.isLeaf && isScalar(v)) {
-            if (obfuscate !== "ignore") {
-              this.update(obfuscate("" + v));
-            }
-          } else {
-            const obfuscationMode = Array.isArray(v) ? config?.forArrays : config?.forObjects;
-            switch (obfuscationMode) {
-              case "exclude":
-                // Continue with traversal
-                break;
-              case "inherit":
-                obfuscateScalars(v, obfuscate);
-                this.block();
-                break;
-              case "inherit-overridable":
-              case undefined: // config is undefined, which means obfuscateDefault is used, which means this path got triggered from another inherit-overridable config
-                obfuscateWithDefault(v, obfuscate);
-                this.block();
-                break;
-              case "obfuscate":
-                if (obfuscate !== "ignore") {
-                  this.update(obfuscate(JSON.stringify(v)));
-                }
-                this.block();
-            }
-          }
+  function obfuscateScalars(o: object, obfuscate: ((text: string) => string) | "ignore"): object {
+    if (obfuscate === "ignore") {
+      return o;
+    }
+    if (Array.isArray(o)) {
+      return o.map((value) => (isScalar(value) ? obfuscate("" + value) : obfuscateScalars(value, obfuscate)));
+    }
+    const result = {};
+    Object.entries(o).forEach(([key, value]) => {
+      result[key] = isScalar(value) ? obfuscate("" + value) : obfuscateScalars(value, obfuscate);
+    });
+    return result;
+  }
+  function obfuscateWithDefault(o: object, obfuscateDefault?: ((text: string) => string) | "ignore"): object {
+    if (Array.isArray(o)) {
+      return o.map((value) => (isScalar(value) ? obfuscateScalar(value, obfuscateDefault) : obfuscateWithDefault(value, obfuscateDefault)));
+    }
+    const result = {};
+    Object.entries(o).forEach(([key, value]) => {
+      const config = caseSensitiveProperties[key] ?? caseInsensitiveProperties[key.toLowerCase()];
+      const obfuscate = config?.obfuscate ?? obfuscateDefault;
+      if (isScalar(value)) {
+        result[key] = obfuscateScalar(value, obfuscate);
+      } else if (obfuscate) {
+        const obfuscationMode = Array.isArray(value) ? config?.forArrays : config?.forObjects;
+        switch (obfuscationMode) {
+          case "exclude":
+            result[key] = obfuscateWithDefault(value, obfuscateDefault);
+            break;
+          case "inherit":
+            result[key] = obfuscateScalars(value, obfuscate);
+            break;
+          case "inherit-overridable":
+          case undefined: // config is undefined, which means obfuscateDefault is used, which means this path got triggered from another inherit-overridable config
+            result[key] = obfuscateWithDefault(value, obfuscate);
+            break;
+          case "obfuscate":
+            result[key] = obfuscate === "ignore" ? value : obfuscate(JSON.stringify(value));
+            break;
         }
+      } else {
+        result[key] = obfuscateWithDefault(value, obfuscateDefault);
       }
     });
-  }
-  function obfuscateObject(o: object): object {
-    o = JSON.parse(JSON.stringify(o));
-    obfuscateWithDefault(o);
-    return o;
+    return result;
   }
 
   function obfuscate(propertyName: string, value: string): string;
   function obfuscate(o: object): object;
   function obfuscate(propertyNameOrObject: object | string, value?: string): object | string {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return typeof propertyNameOrObject === "string" ? obfuscateProperty(propertyNameOrObject, value!) : obfuscateObject(propertyNameOrObject);
+    return typeof propertyNameOrObject === "string" ? obfuscateProperty(propertyNameOrObject, value!) : obfuscateWithDefault(propertyNameOrObject);
   }
   return obfuscate;
 }
