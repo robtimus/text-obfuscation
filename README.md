@@ -262,7 +262,7 @@ Finally, in all formats, it's possible to skip obfuscation by using `"ignore"` i
 
 ## Obfuscating HTTP headers
 
-Use `newHeaderObfuscator` to create a function that can obfuscate single HTTP headers (as strings and string arrays) and HTTP header objects. It's much like `newPropertyObfuscator`, but like HTTP headers it's always case sensitive. Unlike `newPropertyObfuscator`, it doesn't support nested objects, and for nested arrays each element is obfuscated separately. It also does not support skipping obfuscation.
+Use `newHeaderObfuscator` to create a function that can obfuscate single HTTP headers (as strings and string arrays) and HTTP header objects. It's much like `newPropertyObfuscator`, but like HTTP headers it's always case insensitive. Unlike `newPropertyObfuscator`, it doesn't support nested objects, and for nested arrays each element is obfuscated separately. It also does not support skipping obfuscation.
 
 ```
 const headerObfuscator = newHeaderObfuscator({
