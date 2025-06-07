@@ -17,7 +17,7 @@ The following pre-defined functions are provided that all return an immutable ob
 
 Replaces all characters with a mask character that defaults to `*`.
 
-```
+```typescript
 const obfuscator = obfuscateAll();
 const obfuscated = obfuscator("Hello World");
 // obfuscated is "***********"
@@ -29,7 +29,7 @@ Note: using this obfuscator still leaks out information about the length of the 
 
 Replaces the entire text with a fixed number of the given mask character that defaults to `*`.
 
-```
+```typescript
 const obfuscator = obfuscateWithFixedLength(5);
 const obfuscated = obfuscator("Hello World");
 // obfuscated is "*****"
@@ -39,7 +39,7 @@ const obfuscated = obfuscator("Hello World");
 
 Replaces the entire text with a fixed value.
 
-```
+```typescript
 const obfuscator = obfuscateWithFixedValue("foo");
 const obfuscated = obfuscator("Hello World");
 // obfuscated is "foo"
@@ -53,7 +53,7 @@ While the above examples are simple, they are not very flexible. Using `obfuscat
 
 Useful for obfuscating values like credit card numbers.
 
-```
+```typescript
 const obfuscator = obfuscatePortion({
   keepAtEnd: 4,
 });
@@ -63,7 +63,7 @@ const obfuscated = obfuscator("1234567890123456");
 
 It’s advised to use `atLeastFromStart`, to make sure that values of fewer than 16 characters are still obfuscated properly:
 
-```
+```typescript
 const obfuscator = obfuscatePortion({
   keepAtEnd: 4,
   atLeastFromStart: 12,
@@ -76,7 +76,7 @@ const obfuscated = obfuscator("1234567890");
 
 Useful for obfuscating values like zip codes, where the first part is not as sensitive as the full zip code:
 
-```
+```typescript
 const obfuscator = obfuscatePortion({
   keepAtStart: Number.MAX_VALUE,
   atLeastFromEnd: 2,
@@ -91,7 +91,7 @@ Here, the `keepAtStart` instructs the obfuscator to keep everything; however, `a
 
 Similar to using `obfuscateAll`, by default an obfuscator built using `obfuscatePortion` leaks out the length of the original text. If your text has a variable length, you should consider specifying a fixed total length for the result. The length of the result will then be the same no matter how long the input is:
 
-```
+```typescript
 const obfuscator = obfuscatePortion({
   keepAtStart: 2,
   keepAtEnd: 2,
@@ -109,7 +109,7 @@ Note that if `keepAtStart` and `keepAtEnd` are both specified, parts of the inpu
 
 `obfuscateCustom` converts any function that takes a string as input and returns a string into an obfuscator.
 
-```
+```typescript
 const obfuscator = obfuscateCustom(text => text.toUpperCase());
 const obfuscated = obfuscator("Hello World");
 // obfuscated is "HELLO WORLD"
@@ -119,7 +119,7 @@ const obfuscated = obfuscator("Hello World");
 
 `obfuscateNone` is not a function that returns an obfuscator, but an immutable obfuscator itself. It can be used as default to prevent checks. For instance:
 
-```
+```typescript
 const obfuscator = somePossiblyUndefinedObfuscator || obfuscateNone;
 const obfuscated = obfuscator("Hello World");
 // obfuscated is "Hello World" if somePossiblyUndefinedObfuscator was falsy
@@ -129,7 +129,7 @@ const obfuscated = obfuscator("Hello World");
 
 Sometimes the obfucators in this library alone cannot perform the obfuscation you need. For instance, if you want to obfuscate credit cards, but keep the first and last 4 characters. If the credit cards are all fixed length, `obfuscatePortion` can do just that:
 
-```
+```typescript
 const obfuscator = obfuscatePortion({
   keepAtStart: 4,
   keepAtEnd: 4,
@@ -140,7 +140,7 @@ const obfuscated = obfuscator("1234567890123456");
 
 However, if you attempt to use such an obfuscator on only a part of a credit card, you could end up leaking parts of the credit card that you wanted to obfuscate:
 
-```
+```typescript
 const incorrectlyObfuscated = obfuscator("12345678901234");
 // incorrectlyObfuscated is "1234******1234" where "1234********34" would probably be preferred
 ```
@@ -152,7 +152,7 @@ To overcome this issue, it’s possible to combine obfuscators. The form is as f
 
 For instance, for credit card numbers of exactly 16 characters, the above can also be written like this:
 
-```
+```typescript
 const obfuscator = obfuscateNone.untilLength(4)
   .then(obfuscateAll()).untilLength(12)
   .then(obfuscateNone);
@@ -160,7 +160,7 @@ const obfuscator = obfuscateNone.untilLength(4)
 
 With this chaining, it’s now possible to keep the first and last 4 characters, but with at least 8 characters in between:
 
-```
+```typescript
 const obfuscator = obfuscateNone.untilLength(4)
   .then(obfuscatePortion({
     keepAtEnd: 4,
@@ -179,7 +179,7 @@ To make it easier to create obfuscators for structured text like email addresses
 
 For instance:
 
-```
+```typescript
 // Keep the domain as-is
 const localPartObfuscator = obfuscatePortion({
   keepAtStart: 1,
@@ -194,7 +194,7 @@ const obfuscated = obfuscator("test@example.org");
 
 To obfuscate the domain except for the TLD, use a nested `SplitPoint`:
 
-```
+```typescript
 // Keep only the TLD of the domain
 const localPartObfuscator = obfuscatePortion({
   keepAtStart: 1,
@@ -213,7 +213,7 @@ Use `newPropertyObfuscator` to create a function that can obfuscate single objec
 
 The simplest form provides an obfucator function for each property to obfuscate:
 
-```
+```typescript
 const propertyObfuscator = newPropertyObfuscator({
   password: obfuscateWithFixedLength(3),
 });
@@ -231,26 +231,26 @@ const obfuscatedObject = propertyObfuscator({
 This matches property names case sensitively, and will obfuscate any nested object or array using their JSON string representation. This behaviour can be changed in two ways:
 
 1. Per property. Instead of providing an obfuscator function, provide an object instead:
-```
-const propertyObfuscator = newPropertyObfuscator({
-  password: {
-    obfuscate: obfuscateWithFixedLength(3),
-    caseSensitive: false, // defaults to true
-    forObjects: "exclude", // defaults to "obfuscate"
-    forArrays: "exclude", // defaults to "obfuscate"
-  }
-});
-```
+    ```typescript
+    const propertyObfuscator = newPropertyObfuscator({
+      password: {
+        obfuscate: obfuscateWithFixedLength(3),
+        caseSensitive: false, // defaults to true
+        forObjects: "exclude", // defaults to "obfuscate"
+        forArrays: "exclude", // defaults to "obfuscate"
+      }
+    });
+    ```
 2. Using global options:
-```
-const propertyObfuscator = newPropertyObfuscator({
-  password: obfuscateWithFixedLength(3)
-}, {
-  caseSensitive: false, // defaults to true
-  forObjects: "exclude", // defaults to "obfuscate"
-  forArrays: "exclude", // defaults to "obfuscate"
-});
-```
+    ```typescript
+    const propertyObfuscator = newPropertyObfuscator({
+      password: obfuscateWithFixedLength(3)
+    }, {
+      caseSensitive: false, // defaults to true
+      forObjects: "exclude", // defaults to "obfuscate"
+      forArrays: "exclude", // defaults to "obfuscate"
+    });
+    ```
 
 In both cases, `forObjects` and `forArrays` can take the following values:
 * `"exclude"` to not match properties with object or array values; nested properties will be matched separately.
@@ -264,7 +264,7 @@ Finally, in all formats, it's possible to skip obfuscation by using `"ignore"` i
 
 Use `newHeaderObfuscator` to create a function that can obfuscate single HTTP headers (as strings and string arrays) and HTTP header objects. It's much like `newPropertyObfuscator`, but like HTTP headers it's always case insensitive. Unlike `newPropertyObfuscator`, it doesn't support nested objects, and for nested arrays each element is obfuscated separately. It also does not support skipping obfuscation.
 
-```
+```typescript
 const headerObfuscator = newHeaderObfuscator({
   Authorization: obfuscateWithFixedLength(3),
 });
