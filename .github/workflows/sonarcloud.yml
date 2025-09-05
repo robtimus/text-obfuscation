@@ -40,29 +40,22 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm run test
-      - name: Read package.json
+      - name: Create Sonar properties
         run: |
-          echo "projectName=`jq -r .name package.json`" >> $GITHUB_ENV
-          echo "projectDescription=`jq -r .description package.json`" >> $GITHUB_ENV
-          echo "projectHomepage=`jq -r .homepage package.json`" >> $GITHUB_ENV
-          echo "projectBugUrl=`jq -r .bugs.url package.json`" >> $GITHUB_ENV
-          echo "projectRepositoryUrl=`jq -r .repository.url package.json | sed 's/git+//'`" >> $GITHUB_ENV
+          echo "sonar.organization=robtimus-github" > sonar-project.properties
+          echo "sonar.projectKey=robtimus:`jq -r .name package.json`" >> sonar-project.properties
+          echo "sonar.projectDescription=`jq -r .description package.json`" >> sonar-project.properties
+          echo "sonar.links.homepage=`jq -r .homepage package.json`" >> sonar-project.properties
+          echo "sonar.links.issue=`jq -r .bugs.url package.json`" >> sonar-project.properties
+          echo "sonar.links.scm=`jq -r .repository.url package.json | sed 's/git+//'`" >> sonar-project.properties
+          echo "sonar.sources=src" >> sonar-project.properties
+          echo "sonar.tests=test" >> sonar-project.properties
+          echo "sonar.javascript.lcov.reportPaths=./coverage/lcov.info" >> sonar-project.properties
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SonarCloudToken }}
           SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          args: >
-            -Dsonar.organization=robtimus-github
-            -Dsonar.projectKey=robtimus:${{ env.projectName }}
-            -Dsonar.projectDescription="${{ env.projectDescription }}"
-            -Dsonar.links.homepage=${{ env.projectHomepage }}
-            -Dsonar.links.issue=${{ env.projectBugUrl }}
-            -Dsonar.links.scm=${{ env.projectRepositoryUrl }}
-            -Dsonar.sources=src
-            -Dsonar.tests=test
-            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
       - name: SonarQube Quality Gate check
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
