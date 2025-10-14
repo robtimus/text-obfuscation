@@ -124,6 +124,24 @@ function isScalar(v: unknown): boolean {
   return v === undefined || v === null || typeof v !== "object";
 }
 
+function obfuscateScalar(value: unknown, obfuscate?: ((text: string) => string) | "ignore"): unknown {
+  return obfuscate && obfuscate !== "ignore" ? obfuscate("" + value) : value;
+}
+
+function obfuscateScalars(o: object, obfuscate: ((text: string) => string) | "ignore"): object {
+  if (obfuscate === "ignore") {
+    return o;
+  }
+  if (Array.isArray(o)) {
+    return o.map((value) => (isScalar(value) ? obfuscate("" + value) : obfuscateScalars(value, obfuscate)));
+  }
+  const result = {};
+  for (const [key, value] of Object.entries(o)) {
+    result[key] = isScalar(value) ? obfuscate("" + value) : obfuscateScalars(value, obfuscate);
+  }
+  return result;
+}
+
 /**
  * @param properties the properties to obfuscate.
  *                   Passing a function or "ignore" is shorthand for passing {@link PropertyOptions} with only the obfuscate property set.
@@ -167,28 +185,12 @@ export function newPropertyObfuscator(
     const obfuscator = config && config.obfuscate !== "ignore" ? config.obfuscate : obfuscateNone;
     return obfuscator(value);
   }
-  function obfuscateScalar(value: unknown, obfuscate?: ((text: string) => string) | "ignore"): unknown {
-    return obfuscate && obfuscate !== "ignore" ? obfuscate("" + value) : value;
-  }
-  function obfuscateScalars(o: object, obfuscate: ((text: string) => string) | "ignore"): object {
-    if (obfuscate === "ignore") {
-      return o;
-    }
-    if (Array.isArray(o)) {
-      return o.map((value) => (isScalar(value) ? obfuscate("" + value) : obfuscateScalars(value, obfuscate)));
-    }
-    const result = {};
-    Object.entries(o).forEach(([key, value]) => {
-      result[key] = isScalar(value) ? obfuscate("" + value) : obfuscateScalars(value, obfuscate);
-    });
-    return result;
-  }
   function obfuscateWithDefault(o: object, obfuscateDefault?: ((text: string) => string) | "ignore"): object {
     if (Array.isArray(o)) {
       return o.map((value) => (isScalar(value) ? obfuscateScalar(value, obfuscateDefault) : obfuscateWithDefault(value, obfuscateDefault)));
     }
     const result = {};
-    Object.entries(o).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(o)) {
       const config = caseSensitiveProperties[key] ?? caseInsensitiveProperties[key.toLowerCase()];
       const obfuscate = config?.obfuscate ?? obfuscateDefault;
       if (isScalar(value)) {
@@ -213,7 +215,7 @@ export function newPropertyObfuscator(
       } else {
         result[key] = obfuscateWithDefault(value, obfuscateDefault);
       }
-    });
+    }
     return result;
   }
 

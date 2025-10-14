@@ -92,18 +92,18 @@ export interface ObfuscatePortionOptions {
   maskChar?: string;
 }
 
+function validateNonNegativeNumber(value: number | undefined, name: string): number {
+  value = value ?? 0;
+  if (value < 0) {
+    throw new Error(`${name}: ${value} < 0`);
+  }
+  return value;
+}
+
 /**
  * @returns an immutable obfuscator that obfuscates a specific portion of its input.
  */
 export function obfuscatePortion(options: ObfuscatePortionOptions): Obfuscator {
-  function validateNonNegativeNumber(value: number | undefined, name: string): number {
-    value = value ?? 0;
-    if (value < 0) {
-      throw new Error(`${name}: ${value} < 0`);
-    }
-    return value;
-  }
-
   const keepAtStart = validateNonNegativeNumber(options.keepAtStart, "keepAtStart");
   const keepAtEnd = validateNonNegativeNumber(options.keepAtEnd, "keepAtEnd");
   const atLeastFromStart = validateNonNegativeNumber(options.atLeastFromStart, "atLeastFromStart");
