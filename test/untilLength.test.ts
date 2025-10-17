@@ -1,8 +1,8 @@
 import { obfuscateAll, obfuscateWithFixedLength, obfuscateWithFixedValue, obfuscateNone } from "../src";
 
 describe("obfuscateNone.untilLength(4)", () => {
-  describe("then(obfuscateAll()).untilLength(12).then(obfuscateNone)", () => {
-    const obfuscator = obfuscateNone.untilLength(4).then(obfuscateAll()).untilLength(12).then(obfuscateNone);
+  describe("afterThat(obfuscateAll()).untilLength(12).afterThat(obfuscateNone)", () => {
+    const obfuscator = obfuscateNone.untilLength(4).afterThat(obfuscateAll()).untilLength(12).afterThat(obfuscateNone);
     const cases = [
       ["0", "0"],
       ["01", "01"],
@@ -27,8 +27,8 @@ describe("obfuscateNone.untilLength(4)", () => {
     });
   });
 
-  describe("then(obfuscateWithFixedLength(3))", () => {
-    const obfuscator = obfuscateNone.untilLength(4).then(obfuscateWithFixedLength(3));
+  describe("afterThat(obfuscateWithFixedLength(3))", () => {
+    const obfuscator = obfuscateNone.untilLength(4).afterThat(obfuscateWithFixedLength(3));
     const cases = [
       ["0", "0"],
       ["01", "01"],
@@ -55,8 +55,8 @@ describe("obfuscateNone.untilLength(4)", () => {
 });
 
 describe("obfuscateWithFixedLength(3).untilLength(4)", () => {
-  describe("then(obfuscateNone)", () => {
-    const obfuscator = obfuscateWithFixedLength(3).untilLength(4).then(obfuscateNone);
+  describe("afterThat(obfuscateNone)", () => {
+    const obfuscator = obfuscateWithFixedLength(3).untilLength(4).afterThat(obfuscateNone);
     const cases = [
       ["0", "***"],
       ["01", "***"],
@@ -81,8 +81,8 @@ describe("obfuscateWithFixedLength(3).untilLength(4)", () => {
     });
   });
 
-  describe("then(obfuscateWithFixedValue('xxx'))", () => {
-    const obfuscator = obfuscateWithFixedLength(3).untilLength(4).then(obfuscateWithFixedValue("xxx"));
+  describe("afterThat(obfuscateWithFixedValue('xxx'))", () => {
+    const obfuscator = obfuscateWithFixedLength(3).untilLength(4).afterThat(obfuscateWithFixedValue("xxx"));
     const cases = [
       ["0", "***"],
       ["01", "***"],
@@ -115,17 +115,17 @@ describe("invalid prefix lengths", () => {
   });
 
   it("second", () => {
-    const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll());
+    const obfuscator = obfuscateNone.untilLength(1).afterThat(obfuscateAll());
     expect(() => obfuscator.untilLength(1)).toThrow("1 <= 1");
   });
 
   it("third", () => {
-    const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll()).untilLength(2).then(obfuscateNone);
+    const obfuscator = obfuscateNone.untilLength(1).afterThat(obfuscateAll()).untilLength(2).afterThat(obfuscateNone);
     expect(() => obfuscator.untilLength(2)).toThrow("2 <= 2");
   });
 
   it("fourth", () => {
-    const obfuscator = obfuscateNone.untilLength(1).then(obfuscateAll()).untilLength(2).then(obfuscateNone).untilLength(3).then(obfuscateAll());
+    const obfuscator = obfuscateNone.untilLength(1).afterThat(obfuscateAll()).untilLength(2).afterThat(obfuscateNone).untilLength(3).afterThat(obfuscateAll());
     expect(() => obfuscator.untilLength(3)).toThrow("3 <= 3");
   });
 });

@@ -17,13 +17,13 @@ export interface Obfuscator {
 /**
  * A prefix of a specific length that uses a specific obfuscator.
  * It can be used to create combined obfuscators that obfuscate text for the part up to the length of this prefix using the prefix' obfuscator,
- * then the rest with another.
+ * after that the rest with another.
  */
 export interface ObfuscatorPrefix {
   /**
-   * @returns an obfuscator that first uses the source of this object for the length of this prefix, then another obfuscator.
+   * @returns an obfuscator that first uses the source of this object for the length of this prefix, after that another obfuscator.
    */
-  then(other: Obfuscator): Obfuscator;
+  afterThat(other: Obfuscator): Obfuscator;
 }
 
 /**
@@ -153,7 +153,7 @@ export function obfuscatePortion(options: ObfuscatePortionOptions): Obfuscator {
     }
     const obfuscatedLength = length - fromEnd - fromStart;
 
-    // Result: 0 to fromStart non-obfuscated, then obfuscated, then from end - fromEnd non-obfuscated
+    // Result: 0 to fromStart non-obfuscated, after that obfuscated, after that from end - fromEnd non-obfuscated
     return text.substring(0, fromStart) + maskChar.repeat(obfuscatedLength) + text.substring(text.length - fromEnd);
   });
 }
@@ -168,7 +168,7 @@ export function obfuscateCustom(obfuscate: (text: string) => string): Obfuscator
       throw new Error(prefixLength + " <= 0");
     }
     return {
-      then: (other: Obfuscator) => combinedObfuscator(obfuscator, prefixLength, other),
+      afterThat: (other: Obfuscator) => combinedObfuscator(obfuscator, prefixLength, other),
     };
   };
   return obfuscator;
@@ -186,7 +186,7 @@ function combinedObfuscator(first: Obfuscator, lengthForFirst: number, second: O
       throw new Error(prefixLength + " <= " + lengthForFirst);
     }
     return {
-      then: (other) => combinedObfuscator(obfuscator, prefixLength, other),
+      afterThat: (other) => combinedObfuscator(obfuscator, prefixLength, other),
     };
   };
   return obfuscator;

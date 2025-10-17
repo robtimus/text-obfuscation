@@ -98,13 +98,13 @@ describe("Combining obfuscators", () => {
   });
 
   it("16 character credit card numbers", () => {
-    const obfuscator = obfuscateNone.untilLength(4).then(obfuscateAll()).untilLength(12).then(obfuscateNone);
+    const obfuscator = obfuscateNone.untilLength(4).afterThat(obfuscateAll()).untilLength(12).afterThat(obfuscateNone);
     const obfuscated = obfuscator("1234567890123456");
     expect(obfuscated).toBe("1234********3456");
   });
 
   it("any length credit card numbers", () => {
-    const obfuscator = obfuscateNone.untilLength(4).then(
+    const obfuscator = obfuscateNone.untilLength(4).afterThat(
       obfuscatePortion({
         keepAtEnd: 4,
         atLeastFromStart: 8,

@@ -154,15 +154,15 @@ For instance, for credit card numbers of exactly 16 characters, the above can al
 
 ```typescript
 const obfuscator = obfuscateNone.untilLength(4)
-  .then(obfuscateAll()).untilLength(12)
-  .then(obfuscateNone);
+  .afterThat(obfuscateAll()).untilLength(12)
+  .afterThat(obfuscateNone);
 ```
 
 With this chaining, it’s now possible to keep the first and last 4 characters, but with at least 8 characters in between:
 
 ```typescript
 const obfuscator = obfuscateNone.untilLength(4)
-  .then(obfuscatePortion({
+  .afterThat(obfuscatePortion({
     keepAtEnd: 4,
     atLeastFromStart: 8,
   }));
