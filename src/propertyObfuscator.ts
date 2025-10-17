@@ -46,16 +46,6 @@ export interface PropertyOptions {
    * How to handle matched array properties. Overrides any globally set value.
    */
   forArrays?: ObfuscationMode;
-  /**
-   * whether or not to match object properties. Overrides any globally set value.
-   * @deprecated Use `forObjects` instead.
-   */
-  matchObjects?: boolean;
-  /**
-   * whether or not to match array properties. Overrides any globally set value.
-   * @deprecated Use `forArrays` instead.
-   */
-  matchArrays?: boolean;
 }
 
 /**
@@ -74,43 +64,12 @@ export interface GlobalPropertyObfuscatorOptions {
    * How to handle matched array properties. Defaults to `obfuscate`.
    */
   forArrays?: ObfuscationMode;
-  /**
-   * whether or not to match object properties.
-   * @deprecated Use `forObjects` instead.
-   */
-  matchObjects?: boolean;
-  /**
-   * whether or not to match array properties.
-   * @deprecated Use `forArrays` instead.
-   */
-  matchArrays?: boolean;
 }
 
 interface PropertyConfig {
   obfuscate: ((text: string) => string) | "ignore";
   forObjects: ObfuscationMode;
   forArrays: ObfuscationMode;
-}
-
-function forObjects(options: PropertyOptions | GlobalPropertyObfuscatorOptions): ObfuscationMode | undefined {
-  return toObfuscationMode(options.forObjects, options.matchObjects, "Cannot use both forObjects and matchObjects");
-}
-
-function forArrays(options: PropertyOptions | GlobalPropertyObfuscatorOptions): ObfuscationMode | undefined {
-  return toObfuscationMode(options.forArrays, options.matchArrays, "Cannot use both forArrays and matchArrays");
-}
-
-function toObfuscationMode(obfuscationMode: ObfuscationMode | undefined, match: boolean | undefined, errorMessage: string): ObfuscationMode | undefined {
-  if (obfuscationMode && match !== undefined) {
-    throw new Error(errorMessage);
-  }
-  if (match === true) {
-    return "obfuscate";
-  }
-  if (match === false) {
-    return "exclude";
-  }
-  return obfuscationMode;
 }
 
 function obfuscationMode(value?: ObfuscationMode, fallbackValue?: ObfuscationMode): ObfuscationMode {
@@ -162,15 +121,15 @@ export function newPropertyObfuscator(
       caseSensitive = globalProperties.caseSensitive !== false;
       propertyConfig = {
         obfuscate: property,
-        forObjects: obfuscationMode(forObjects(globalProperties)),
-        forArrays: obfuscationMode(forArrays(globalProperties)),
+        forObjects: obfuscationMode(globalProperties.forObjects),
+        forArrays: obfuscationMode(globalProperties.forArrays),
       };
     } else {
       caseSensitive = property.caseSensitive ?? globalProperties.caseSensitive !== false;
       propertyConfig = {
         obfuscate: property.obfuscate,
-        forObjects: obfuscationMode(forObjects(property), forObjects(globalProperties)),
-        forArrays: obfuscationMode(forArrays(property), forArrays(globalProperties)),
+        forObjects: obfuscationMode(property.forObjects, globalProperties.forObjects),
+        forArrays: obfuscationMode(property.forArrays, globalProperties.forArrays),
       };
     }
     if (caseSensitive) {
