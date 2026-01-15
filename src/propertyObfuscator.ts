@@ -80,7 +80,7 @@ function obfuscationMode(value?: ObfuscationMode, fallbackValue?: ObfuscationMod
 }
 
 function isScalar(v: unknown): boolean {
-  return v === undefined || v === null || typeof v !== "object";
+  return v === undefined || v === null || v instanceof Date || v instanceof RegExp || typeof v !== "object";
 }
 
 function obfuscateScalar(value: unknown, obfuscate?: ((text: string) => string) | "ignore"): unknown {
