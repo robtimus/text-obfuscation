@@ -207,6 +207,56 @@ describe("Obfuscating object properties", () => {
       password: "***",
     });
   });
+
+  it("with replacer", () => {
+    const propertyObfuscator = newPropertyObfuscator(
+      {
+        setAsArray: obfuscateWithFixedLength(3),
+        setAsObject: obfuscateWithFixedLength(3),
+      },
+      {
+        forObjects: "inherit", // otherwise setAsObject will be obfuscated to "***"
+        forArrays: "inherit", // otherwise setAsArray will be obfuscated to "***"
+        replacer: (value, key) => {
+          if (key === "setAsArray" && value instanceof Set) {
+            return [...value];
+          }
+          if (key === "removedSet") {
+            return undefined;
+          }
+          return value;
+        },
+      }
+    );
+    const obfuscatedObject = propertyObfuscator({
+      setAsArray: new Set(["a", "b", "c"]),
+      setAsObject: new Set(["a", "b", "c"]),
+      removedSet: new Set(["a", "b", "c"]), // this gets removed because it's replaced with undefined
+    });
+    expect(obfuscatedObject).toStrictEqual({
+      setAsArray: ["***", "***", "***"],
+      setAsObject: {},
+    });
+  });
+
+  it("with custom scalar type", () => {
+    const propertyObfuscator = newPropertyObfuscator(
+      {
+        scalarError: atFirst(": ").splitTo(obfuscateNone, obfuscateWithFixedLength(3)),
+      },
+      {
+        treatAsScalar: (o, key) => key === "scalarError" && o instanceof Error,
+      }
+    );
+    const obfuscatedObject = propertyObfuscator({
+      scalarError: new Error("this will be treated as scalar"),
+      nonScalarError: new Error("this will become an empty object"),
+    });
+    expect(obfuscatedObject).toStrictEqual({
+      scalarError: "Error: ***",
+      nonScalarError: {},
+    });
+  });
 });
 
 it("Obfuscating HTTP headers", () => {

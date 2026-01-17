@@ -816,6 +816,183 @@ describe("newPropertyObfuscator", () => {
       const obfuscated = propertyObfuscator(input);
       expect(obfuscated).toEqual(expectedObfuscatingInheritedOverridable);
     });
+
+    it("with custom scalar types", () => {
+      const input = {
+        string: "foo",
+        obfuscatedArray: ["a", "b", "c"],
+        nonObfuscatedArray: ["a", "b", "c"],
+        scalarObfuscatedArray: ["a", "b", "c"],
+        scalarNonObfuscatedArray: ["a", "b", "c"],
+      };
+      const expected = {
+        string: "foo",
+        obfuscatedArray: ["***", "***", "***"],
+        nonObfuscatedArray: ["a", "b", "c"],
+        scalarObfuscatedArray: "***",
+        scalarNonObfuscatedArray: ["a", "b", "c"],
+      };
+
+      const obfuscator = obfuscateWithFixedLength(3);
+      const treatAsScalarReceivers: unknown[] = [];
+      const propertyObfuscator = newPropertyObfuscator(
+        {
+          obfuscatedArray: obfuscator,
+          scalarObfuscatedArray: obfuscator,
+        },
+        {
+          forArrays: "inherit",
+          treatAsScalar: function (o, key) {
+            treatAsScalarReceivers.push(this);
+            return Array.isArray(o) && key.startsWith("scalar");
+          },
+        }
+      );
+
+      const obfuscated = propertyObfuscator(input);
+      expect(obfuscated).toEqual(expected);
+
+      // treatAsScalar is called once for each property except for the already-scalar one
+      expect(treatAsScalarReceivers).toHaveLength(Object.entries(input).length - 1);
+      const distinctReceivers = new Set(treatAsScalarReceivers);
+      expect(distinctReceivers.size).toBe(1);
+      expect(distinctReceivers).toEqual(new Set([input]));
+    });
+
+    it("with replacer", () => {
+      const input = {
+        originalUndefined: undefined,
+        obfuscatedSet: new Set(["a", "b", undefined]),
+        nonObfuscatedSet: new Set(["a", "b", undefined]),
+        scalarSet: new Set(["a", "b", undefined]),
+        regularSet: new Set(["a", "b", undefined]),
+        undefinedSet: new Set(["a", "b", undefined]),
+        obfuscatedMap: new Map([
+          ["a", 1],
+          ["b", 2],
+          ["c", undefined],
+        ]),
+        nonObfuscatedMap: new Map([
+          ["a", 1],
+          ["b", 2],
+          ["c", undefined],
+        ]),
+        scalarMap: new Map([
+          ["a", 1],
+          ["b", 2],
+          ["c", undefined],
+        ]),
+        regularMap: new Map([
+          ["a", 1],
+          ["b", 2],
+          ["c", undefined],
+        ]),
+        undefinedMap: new Map([
+          ["a", 1],
+          ["b", 2],
+          ["c", undefined],
+        ]),
+        nested: {
+          set: new Set(["a", "b", undefined]),
+          map: new Map([
+            ["a", 1],
+            ["b", 2],
+            ["c", undefined],
+          ]),
+          undefined: 4,
+        },
+      };
+      const expected = {
+        originalUndefined: undefined,
+        obfuscatedSet: ["***", "***", "***"],
+        nonObfuscatedSet: ["a", "b", undefined],
+        scalarSet: `${["a", "b", undefined]}`,
+        regularSet: {},
+        obfuscatedMap: {
+          a: "***",
+          b: "***",
+          c: "***",
+        },
+        nonObfuscatedMap: {
+          a: 1,
+          b: 2,
+          c: undefined,
+        },
+        scalarMap: JSON.stringify({ a: 1, b: 2, c: undefined }),
+        regularMap: {},
+        nested: {
+          set: ["***", "***", "***"],
+          map: {
+            a: "***",
+            b: "***",
+            c: "***",
+          },
+        },
+      };
+
+      const obfuscator = obfuscateWithFixedLength(3);
+      function setToArray<T>(s: Set<T>): T[] {
+        return [...s];
+      }
+      function mapToObject<T>(m: Map<string, T>): object {
+        // Object.fromEntries can be used if the target and minimum Node.js version are increased
+        const result: { [key: string]: unknown } = {};
+        for (const [k, v] of m.entries()) {
+          result[k] = v;
+        }
+        return result;
+      }
+      const replacerReceivers: unknown[] = [];
+      const replacedMaps: object[] = [];
+      const propertyObfuscator = newPropertyObfuscator(
+        {
+          obfuscatedSet: obfuscator,
+          obfuscatedMap: obfuscator,
+          nested: obfuscator,
+        },
+        {
+          forObjects: "inherit",
+          forArrays: "inherit",
+          replacer: function (value, key) {
+            replacerReceivers.push(this);
+            if (key.startsWith("scalar")) {
+              if (value instanceof Set) {
+                return `${setToArray(value)}`;
+              }
+              if (value instanceof Map) {
+                return JSON.stringify(mapToObject(value));
+              }
+            }
+            if (key.startsWith("undefined")) {
+              return undefined;
+            }
+            if (!key.startsWith("regular")) {
+              if (value instanceof Set) {
+                return setToArray(value);
+              }
+              if (value instanceof Map) {
+                const result = mapToObject(value);
+                replacedMaps.push(result);
+                return result;
+              }
+            }
+            return value;
+          },
+        }
+      );
+
+      const obfuscated = propertyObfuscator(input);
+      expect(obfuscated).toEqual(expected);
+
+      // The replacer is called once for each property except for the undefined one,
+      // plus 2 times for both of the replaced Map's entries (excluding the undefined values),
+      // plus 1 time for the nested Set,
+      // plus 3 times for the nested Map plus it's entries,
+      // plus 1 time for the nested "undefined" entry
+      expect(replacerReceivers).toHaveLength(Object.entries(input).length - 1 + 9);
+      const distinctReceivers = new Set(replacerReceivers);
+      expect(distinctReceivers).toEqual(new Set([input, input.nested, ...replacedMaps]));
+    });
   });
 
   describe("for single property", () => {

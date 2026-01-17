@@ -244,7 +244,7 @@ This matches property names case sensitively, and will obfuscate any nested obje
 2. Using global options:
     ```typescript
     const propertyObfuscator = newPropertyObfuscator({
-      password: obfuscateWithFixedLength(3)
+      password: obfuscateWithFixedLength(3),
     }, {
       caseSensitive: false, // defaults to true
       forObjects: "exclude", // defaults to "obfuscate"
@@ -259,6 +259,56 @@ In both cases, `forObjects` and `forArrays` can take the following values:
 * `"inherit-overridable"` to obfuscate each nested scalar property value or array element using the given obfuscator; however, if a nested property has its own obfuscator defined this will be used instead.
 
 Finally, in all formats, it's possible to skip obfuscation by using `"ignore"` instead of an obfuscator function. This can be useful for skipping entire object trees.
+
+### Customizing obfuscation
+
+Obfuscation iterates over the object structure. It will do so as follows:
+* If a property value is an array, the array is iterated over unless the array itself is obfuscated (`forArrays` is `obfuscate`),
+* else if a property value is an object, the _enumerable own properties_ are iterated over unless the object itself is obfuscated (`forObjects` is `obfuscate`),
+* else the property value is considered _scalar_, and either the property value's string representation is obfuscated, or the property value is included as-is.
+
+For objects, the enumerable own properties may not accurately describe the object. Examples are `Date`, `Set` and `Map`, which have no enumerable own properties and by default result in empty objects (`{}`). Two options can be used to alter handling of objects:
+
+1. Replace values before they are handled. This can be done by setting global option `replacer` to a function that takes the value to potentially replace and the key for the object in the containing object. For array elements the key is the key for the enclosing array. The object in which the value was found is provided as the function's `this` context. If the function returns `undefined` the property will be omitted instead.
+    ```typescript
+    const propertyObfuscator = newPropertyObfuscator({
+      setAsArray: obfuscateWithFixedLength(3),
+      setAsObject: obfuscateWithFixedLength(3),
+    }, {
+      forObjects: "inherit", // otherwise setAsObject will be obfuscated to "***"
+      forArrays: "inherit", // otherwise setAsArray will be obfuscated to "***"
+      replacer: (value, key) => {
+        if (key === "setAsArray" && value instanceof Set) {
+          return [...value];
+        }
+        if (key === "removedSet") {
+          return undefined;
+        }
+        return value;
+      },
+    })
+    const obfuscatedObject = propertyObfuscator({
+      setAsArray: new Set(["a", "b", "c"]),
+      setAsObject: new Set(["a", "b", "c"]),
+      removedSet: new Set(["a", "b", "c"]), // this gets removed because it's replaced with undefined
+    });
+    // obfuscatedObject is { setAsArray: ["***", "***", "***"], setAsObject: {} }
+    ```
+    Note that the replacer can also be used for non-object values like strings or numbers. The only value it will not be called for is `undefined`.
+2. Let objects be treated as scalar instead of as objects. This is already done automatically for instances of `Date` and `RegExp`, but it can be done for other object types by setting global option `treatAsScalar` to a function that takes the object to check and the key for the object in the containing object. For array elements the key is the key for the enclosing array. The object in which the object was found is provided as the function's `this` context.
+    ```typescript
+    const propertyObfuscator = newPropertyObfuscator({
+      scalarError: atFirst(": ").splitTo(obfuscateNone, obfuscateWithFixedLength(3)),
+    }, {
+      treatAsScalar: (o, key) => key === "scalarError" && o instanceof Error,
+    })
+    const obfuscatedObject = propertyObfuscator({
+      scalarError: new Error("this will be treated as scalar"),
+      nonScalarError: new Error("this will become an empty object"),
+    });
+    // obfuscatedObject is { scalarError: "Error: ***", nonScalarError: {} }
+    ```
+
 
 ## Obfuscating HTTP headers
 
