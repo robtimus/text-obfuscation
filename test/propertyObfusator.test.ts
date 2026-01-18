@@ -935,12 +935,7 @@ describe("newPropertyObfuscator", () => {
         return [...s];
       }
       function mapToObject<T>(m: Map<string, T>): object {
-        // Object.fromEntries can be used if the target and minimum Node.js version are increased
-        const result: { [key: string]: unknown } = {};
-        for (const [k, v] of m.entries()) {
-          result[k] = v;
-        }
-        return result;
+        return Object.fromEntries(m.entries());
       }
       const replacerReceivers: unknown[] = [];
       const replacedMaps: object[] = [];
