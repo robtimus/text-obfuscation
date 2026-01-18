@@ -137,7 +137,7 @@ describe("newPropertyObfuscator", () => {
       notMatchedBooleanTrue: true,
       notMatchedBooleanFalse: false,
       notMatchedDate: date,
-      notMatchedRegex: regex,
+      notMatchedRegex: {},
       nonMatchedNull: null,
       nonMatchedObject: {
         notMatchedString: "123456",
@@ -146,7 +146,7 @@ describe("newPropertyObfuscator", () => {
         notMatchedBooleanTrue: true,
         notMatchedBooleanFalse: false,
         notMatchedDate: date,
-        notMatchedRegex: regex,
+        notMatchedRegex: {},
         nonMatchedNull: null,
       },
       nested: [
@@ -167,7 +167,7 @@ describe("newPropertyObfuscator", () => {
           notMatchedBooleanTrue: true,
           notMatchedBooleanFalse: false,
           notMatchedDate: date,
-          notMatchedRegex: regex,
+          notMatchedRegex: {},
           nonMatchedNull: null,
         },
       ],
@@ -214,7 +214,7 @@ describe("newPropertyObfuscator", () => {
       booleanTrue: "***",
       booleanFalse: "***",
       date: "now",
-      regex: "match-all",
+      regex: {},
       null: "***",
       object: {
         string: "***",
@@ -223,7 +223,7 @@ describe("newPropertyObfuscator", () => {
         booleanTrue: "***",
         booleanFalse: "***",
         date: "now",
-        regex: "match-all",
+        regex: {},
         null: "***",
         nested: [
           {
@@ -239,7 +239,7 @@ describe("newPropertyObfuscator", () => {
       notMatchedBooleanTrue: true,
       notMatchedBooleanFalse: false,
       notMatchedDate: date,
-      notMatchedRegex: regex,
+      notMatchedRegex: {},
       nonMatchedNull: null,
       nonMatchedObject: {
         notMatchedString: "123456",
@@ -248,7 +248,7 @@ describe("newPropertyObfuscator", () => {
         notMatchedBooleanTrue: true,
         notMatchedBooleanFalse: false,
         notMatchedDate: date,
-        notMatchedRegex: regex,
+        notMatchedRegex: {},
         nonMatchedNull: null,
       },
       nested: [
@@ -259,7 +259,7 @@ describe("newPropertyObfuscator", () => {
           booleanTrue: "***",
           booleanFalse: "***",
           date: "now",
-          regex: "match-all",
+          regex: {},
           null: "***",
           object: {
             string: "***",
@@ -268,7 +268,7 @@ describe("newPropertyObfuscator", () => {
             booleanTrue: "***",
             booleanFalse: "***",
             date: "now",
-            regex: "match-all",
+            regex: {},
             nested: [
               {
                 prop1: "1",
@@ -283,7 +283,7 @@ describe("newPropertyObfuscator", () => {
           notMatchedBooleanTrue: true,
           notMatchedBooleanFalse: false,
           notMatchedDate: date,
-          notMatchedRegex: regex,
+          notMatchedRegex: {},
           nonMatchedNull: null,
         },
       ],
@@ -294,7 +294,7 @@ describe("newPropertyObfuscator", () => {
         booleanTrue: "***",
         booleanFalse: "***",
         date: "now",
-        regex: "match-all",
+        regex: {},
         null: "***",
         object: {
           string: "***",
@@ -303,7 +303,7 @@ describe("newPropertyObfuscator", () => {
           booleanTrue: "***",
           booleanFalse: "***",
           date: "now",
-          regex: "match-all",
+          regex: {},
           nested: [
             {
               prop1: "1",
@@ -318,7 +318,7 @@ describe("newPropertyObfuscator", () => {
         notMatchedBooleanTrue: true,
         notMatchedBooleanFalse: false,
         notMatchedDate: date,
-        notMatchedRegex: regex,
+        notMatchedRegex: {},
         nonMatchedNull: null,
       },
     };
@@ -330,7 +330,7 @@ describe("newPropertyObfuscator", () => {
       booleanTrue: "***",
       booleanFalse: "***",
       date: "now",
-      regex: "match-all",
+      regex: {},
       null: "***",
       object: {
         string: "ooo",
@@ -339,7 +339,7 @@ describe("newPropertyObfuscator", () => {
         booleanTrue: "ooo",
         booleanFalse: "ooo",
         date: "ooo",
-        regex: "ooo",
+        regex: {},
         null: "ooo",
         nested: [
           {
@@ -355,7 +355,7 @@ describe("newPropertyObfuscator", () => {
       notMatchedBooleanTrue: true,
       notMatchedBooleanFalse: false,
       notMatchedDate: date,
-      notMatchedRegex: regex,
+      notMatchedRegex: {},
       nonMatchedNull: null,
       nonMatchedObject: {
         notMatchedString: "123456",
@@ -364,7 +364,7 @@ describe("newPropertyObfuscator", () => {
         notMatchedBooleanTrue: true,
         notMatchedBooleanFalse: false,
         notMatchedDate: date,
-        notMatchedRegex: regex,
+        notMatchedRegex: {},
         nonMatchedNull: null,
       },
       nested: [
@@ -375,7 +375,7 @@ describe("newPropertyObfuscator", () => {
           booleanTrue: "***",
           booleanFalse: "***",
           date: "now",
-          regex: "match-all",
+          regex: {},
           null: "***",
           object: {
             string: "ooo",
@@ -384,7 +384,7 @@ describe("newPropertyObfuscator", () => {
             booleanTrue: "ooo",
             booleanFalse: "ooo",
             date: "ooo",
-            regex: "ooo",
+            regex: {},
             nested: [
               {
                 prop1: "ooo",
@@ -399,7 +399,7 @@ describe("newPropertyObfuscator", () => {
           notMatchedBooleanTrue: true,
           notMatchedBooleanFalse: false,
           notMatchedDate: date,
-          notMatchedRegex: regex,
+          notMatchedRegex: {},
           nonMatchedNull: null,
         },
       ],
@@ -446,7 +446,7 @@ describe("newPropertyObfuscator", () => {
       booleanTrue: "***",
       booleanFalse: "***",
       date: "now",
-      regex: "match-all",
+      regex: {},
       null: "***",
       object: {
         string: "***",
@@ -455,7 +455,7 @@ describe("newPropertyObfuscator", () => {
         booleanTrue: "***",
         booleanFalse: "***",
         date: "now",
-        regex: "match-all",
+        regex: {},
         null: "***",
         nested: [
           {
@@ -471,7 +471,7 @@ describe("newPropertyObfuscator", () => {
       notMatchedBooleanTrue: true,
       notMatchedBooleanFalse: false,
       notMatchedDate: date,
-      notMatchedRegex: regex,
+      notMatchedRegex: {},
       nonMatchedNull: null,
       nonMatchedObject: {
         notMatchedString: "123456",
@@ -480,7 +480,7 @@ describe("newPropertyObfuscator", () => {
         notMatchedBooleanTrue: true,
         notMatchedBooleanFalse: false,
         notMatchedDate: date,
-        notMatchedRegex: regex,
+        notMatchedRegex: {},
         nonMatchedNull: null,
       },
       nested: [
@@ -491,7 +491,7 @@ describe("newPropertyObfuscator", () => {
           booleanTrue: "***",
           booleanFalse: "***",
           date: "now",
-          regex: "match-all",
+          regex: {},
           null: "***",
           object: {
             string: "***",
@@ -500,7 +500,7 @@ describe("newPropertyObfuscator", () => {
             booleanTrue: "***",
             booleanFalse: "***",
             date: "now",
-            regex: "match-all",
+            regex: {},
             nested: [
               {
                 prop1: "ooo",
@@ -515,7 +515,7 @@ describe("newPropertyObfuscator", () => {
           notMatchedBooleanTrue: true,
           notMatchedBooleanFalse: false,
           notMatchedDate: date,
-          notMatchedRegex: regex,
+          notMatchedRegex: {},
           nonMatchedNull: null,
         },
       ],
@@ -526,7 +526,7 @@ describe("newPropertyObfuscator", () => {
         booleanTrue: "***",
         booleanFalse: "***",
         date: "now",
-        regex: "match-all",
+        regex: {},
         null: "***",
         object: {
           string: "***",
@@ -535,7 +535,7 @@ describe("newPropertyObfuscator", () => {
           booleanTrue: "***",
           booleanFalse: "***",
           date: "now",
-          regex: "match-all",
+          regex: {},
           nested: [
             {
               prop1: "ooo",
@@ -550,7 +550,7 @@ describe("newPropertyObfuscator", () => {
         notMatchedBooleanTrue: true,
         notMatchedBooleanFalse: false,
         notMatchedDate: date,
-        notMatchedRegex: regex,
+        notMatchedRegex: {},
         nonMatchedNull: null,
       },
     };
@@ -645,8 +645,16 @@ describe("newPropertyObfuscator", () => {
           float: propertyConfig,
           booleanTrue: propertyConfig,
           booleanFalse: propertyConfig,
-          date: obfuscateWithFixedValue("now"),
-          regex: obfuscateWithFixedValue("match-all"),
+          date: {
+            obfuscate: obfuscateWithFixedValue("now"),
+            forObjects: "obfuscate",
+            forArrays: "obfuscate",
+          },
+          regex: {
+            obfuscate: obfuscateWithFixedValue("match-all"),
+            forObjects: "obfuscate",
+            forArrays: "obfuscate",
+          },
           object: {
             obfuscate: obfuscateWithFixedLength(3, "o"),
             forObjects: "obfuscate",
@@ -714,8 +722,16 @@ describe("newPropertyObfuscator", () => {
           float: propertyConfig,
           booleanTrue: propertyConfig,
           booleanFalse: propertyConfig,
-          date: obfuscateWithFixedValue("now"),
-          regex: obfuscateWithFixedValue("match-all"),
+          date: {
+            obfuscate: obfuscateWithFixedValue("now"),
+            forObjects: "exclude",
+            forArrays: "exclude",
+          },
+          regex: {
+            obfuscate: obfuscateWithFixedValue("match-all"),
+            forObjects: "exclude",
+            forArrays: "exclude",
+          },
           object: {
             obfuscate: obfuscateWithFixedLength(3, "o"),
             forObjects: "exclude",
@@ -756,8 +772,16 @@ describe("newPropertyObfuscator", () => {
         float: propertyConfig,
         booleanTrue: propertyConfig,
         booleanFalse: propertyConfig,
-        date: obfuscateWithFixedValue("now"),
-        regex: obfuscateWithFixedValue("match-all"),
+        date: {
+          obfuscate: obfuscateWithFixedValue("now"),
+          forObjects: "inherit",
+          forArrays: "inherit",
+        },
+        regex: {
+          obfuscate: obfuscateWithFixedValue("match-all"),
+          forObjects: "inherit",
+          forArrays: "inherit",
+        },
         object: {
           obfuscate: obfuscateWithFixedLength(3, "o"),
           forObjects: "inherit",
@@ -793,8 +817,16 @@ describe("newPropertyObfuscator", () => {
         float: propertyConfig,
         booleanTrue: propertyConfig,
         booleanFalse: propertyConfig,
-        date: obfuscateWithFixedValue("now"),
-        regex: obfuscateWithFixedValue("match-all"),
+        date: {
+          obfuscate: obfuscateWithFixedValue("now"),
+          forObjects: "inherit-overridable",
+          forArrays: "inherit-overridable",
+        },
+        regex: {
+          obfuscate: obfuscateWithFixedValue("match-all"),
+          forObjects: "inherit-overridable",
+          forArrays: "inherit-overridable",
+        },
         object: {
           obfuscate: obfuscateWithFixedLength(3, "o"),
           forObjects: "inherit-overridable",

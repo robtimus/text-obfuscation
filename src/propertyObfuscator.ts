@@ -106,9 +106,7 @@ function obfuscationMode(value?: ObfuscationMode, fallbackValue?: ObfuscationMod
 }
 
 function isScalar(value: unknown, key: string, o: object, context: ObfuscatorContext): boolean {
-  return (
-    value === undefined || value === null || value instanceof Date || value instanceof RegExp || typeof value !== "object" || (context.treatAsScalar?.bind(o)(value, key) ?? false)
-  );
+  return value === undefined || value === null || value instanceof Date || typeof value !== "object" || (context.treatAsScalar?.bind(o)(value, key) ?? false);
 }
 
 function obfuscateScalar(value: unknown, obfuscate?: ((text: string) => string) | "ignore"): unknown {

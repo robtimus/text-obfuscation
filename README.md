@@ -295,7 +295,7 @@ For objects, the enumerable own properties may not accurately describe the objec
     // obfuscatedObject is { setAsArray: ["***", "***", "***"], setAsObject: {} }
     ```
     Note that the replacer can also be used for non-object values like strings or numbers. The only value it will not be called for is `undefined`.
-2. Let objects be treated as scalar instead of as objects. This is already done automatically for instances of `Date` and `RegExp`, but it can be done for other object types by setting global option `treatAsScalar` to a function that takes the object to check and the key for the object in the containing object. For array elements the key is the key for the enclosing array. The object in which the object was found is provided as the function's `this` context.
+2. Let objects be treated as scalar instead of as objects. This is already done automatically for instances of `Date`, but it can be done for other object types by setting global option `treatAsScalar` to a function that takes the object to check and the key for the object in the containing object. For array elements the key is the key for the enclosing array. The object in which the object was found is provided as the function's `this` context.
     ```typescript
     const propertyObfuscator = newPropertyObfuscator({
       scalarError: atFirst(": ").splitTo(obfuscateNone, obfuscateWithFixedLength(3)),
