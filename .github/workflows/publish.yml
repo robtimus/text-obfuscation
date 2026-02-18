@@ -36,7 +36,7 @@ jobs:
       - name: Update npm
         run: npm install -g npm@latest
       - name: Install packages
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: Build project
         run: npm run build
       - name: Publish
