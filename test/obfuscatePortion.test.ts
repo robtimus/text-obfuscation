@@ -313,19 +313,19 @@ describe("obfuscatePortion", () => {
 
   describe("invalid input", () => {
     it("keepAtStart < 0", () => {
-      expect(() => obfuscatePortion({ keepAtStart: -1 })).toThrowError("keepAtStart: -1 < 0");
+      expect(() => obfuscatePortion({ keepAtStart: -1 })).toThrow("keepAtStart: -1 < 0");
     });
 
     it("keepAtEnd < 0", () => {
-      expect(() => obfuscatePortion({ keepAtEnd: -1 })).toThrowError("keepAtEnd: -1 < 0");
+      expect(() => obfuscatePortion({ keepAtEnd: -1 })).toThrow("keepAtEnd: -1 < 0");
     });
 
     it("atLeastFomStart < 0", () => {
-      expect(() => obfuscatePortion({ atLeastFromStart: -1 })).toThrowError("atLeastFromStart: -1 < 0");
+      expect(() => obfuscatePortion({ atLeastFromStart: -1 })).toThrow("atLeastFromStart: -1 < 0");
     });
 
     it("atLeastFromEnd < 0", () => {
-      expect(() => obfuscatePortion({ atLeastFromEnd: -1 })).toThrowError("atLeastFromEnd: -1 < 0");
+      expect(() => obfuscatePortion({ atLeastFromEnd: -1 })).toThrow("atLeastFromEnd: -1 < 0");
     });
 
     it("keepAtStart > fixedTotalLength", () => {
@@ -333,8 +333,8 @@ describe("obfuscatePortion", () => {
         obfuscatePortion({
           keepAtStart: 4,
           fixedTotalLength: 3,
-        })
-      ).toThrowError("fixedTotalLength (3) < keepAtStart (4) + keepAtEnd (0)");
+        }),
+      ).toThrow("fixedTotalLength (3) < keepAtStart (4) + keepAtEnd (0)");
     });
 
     it("keepAtEnd > fixedTotalLength", () => {
@@ -342,8 +342,8 @@ describe("obfuscatePortion", () => {
         obfuscatePortion({
           keepAtEnd: 4,
           fixedTotalLength: 3,
-        })
-      ).toThrowError("fixedTotalLength (3) < keepAtStart (0) + keepAtEnd (4)");
+        }),
+      ).toThrow("fixedTotalLength (3) < keepAtStart (0) + keepAtEnd (4)");
     });
 
     it("keepAtStart + keepAtEnd > fixedTotalLength", () => {
@@ -352,8 +352,8 @@ describe("obfuscatePortion", () => {
           keepAtStart: 4,
           keepAtEnd: 4,
           fixedTotalLength: 7,
-        })
-      ).toThrowError("fixedTotalLength (7) < keepAtStart (4) + keepAtEnd (4)");
+        }),
+      ).toThrow("fixedTotalLength (7) < keepAtStart (4) + keepAtEnd (4)");
     });
   });
 });

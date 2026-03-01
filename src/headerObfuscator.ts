@@ -73,7 +73,7 @@ export function newHeaderObfuscator(headers: { [name: string]: (text: string) =>
   function obfuscate(headers: HeaderObjectWithNumber): HeaderObjectWithNumber;
   function obfuscate(
     headerNameOrObject: string | HeaderObject | HeaderObjectWithNumber,
-    headerValue?: string | string[]
+    headerValue?: string | string[],
   ): string | string[] | HeaderObject | HeaderObjectWithNumber {
     if (typeof headerNameOrObject === "string") {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

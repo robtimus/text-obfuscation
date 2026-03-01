@@ -140,7 +140,7 @@ function obfuscateProperty(propertyName: string, value: string, context: Obfusca
 function obfuscateWithDefault(o: object, objectKey: string, obfuscateDefault: ((text: string) => string) | "ignore" | undefined, context: ObfuscatorContext): object {
   if (Array.isArray(o)) {
     return o.map((value) =>
-      isScalar(value, objectKey, o, context) ? obfuscateScalar(value, obfuscateDefault) : obfuscateWithDefault(value, objectKey, obfuscateDefault, context)
+      isScalar(value, objectKey, o, context) ? obfuscateScalar(value, obfuscateDefault) : obfuscateWithDefault(value, objectKey, obfuscateDefault, context),
     );
   }
   const result = {};
@@ -185,7 +185,7 @@ function obfuscateWithDefault(o: object, objectKey: string, obfuscateDefault: ((
  */
 export function newPropertyObfuscator(
   properties: { [name: string]: PropertyOptions | ((text: string) => string) | "ignore" },
-  globalProperties: GlobalPropertyObfuscatorOptions = {}
+  globalProperties: GlobalPropertyObfuscatorOptions = {},
 ): PropertyObfuscator {
   // First normalize the input properties, this also allows easier case sensitive/insensitive lookups
   const caseSensitiveProperties: { [name: string]: PropertyConfig | undefined } = {};

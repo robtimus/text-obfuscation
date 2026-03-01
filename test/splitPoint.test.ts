@@ -37,7 +37,7 @@ describe("atLast('@')", () => {
 });
 
 it("atNth('.', -1)", () => {
-  expect(() => atNth(".", -1)).toThrowError("-1 < 0");
+  expect(() => atNth(".", -1)).toThrow("-1 < 0");
 });
 
 describe("atNth('.', 0)", () => {
@@ -101,7 +101,7 @@ describe("atNth('.', 2)", () => {
 
 describe("splitPoint", () => {
   it("negative split length", () => {
-    expect(() => newSplitPoint(() => 0, -1)).toThrowError("-1 < 0");
+    expect(() => newSplitPoint(() => 0, -1)).toThrow("-1 < 0");
   });
 
   describe("zero length", () => {

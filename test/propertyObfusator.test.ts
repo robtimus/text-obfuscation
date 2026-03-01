@@ -573,7 +573,7 @@ describe("newPropertyObfuscator", () => {
         },
         {
           caseSensitive: true,
-        }
+        },
       );
 
       const obfuscated = propertyObfuscator(input);
@@ -598,7 +598,7 @@ describe("newPropertyObfuscator", () => {
         },
         {
           caseSensitive: false,
-        }
+        },
       );
 
       const obfuscated = propertyObfuscator(input);
@@ -624,7 +624,7 @@ describe("newPropertyObfuscator", () => {
         {
           forObjects: "obfuscate",
           forArrays: "obfuscate",
-        }
+        },
       );
 
       const obfuscated = propertyObfuscator(input);
@@ -675,7 +675,7 @@ describe("newPropertyObfuscator", () => {
         {
           forObjects: "exclude",
           forArrays: "exclude",
-        }
+        },
       );
 
       const obfuscated = objecObfuscator(input);
@@ -701,7 +701,7 @@ describe("newPropertyObfuscator", () => {
         {
           forObjects: "exclude",
           forArrays: "exclude",
-        }
+        },
       );
 
       const obfuscated = propertyObfuscator(input);
@@ -752,7 +752,7 @@ describe("newPropertyObfuscator", () => {
         {
           forObjects: "obfuscate",
           forArrays: "obfuscate",
-        }
+        },
       );
 
       const obfuscated = propertyObfuscator(input);
@@ -878,7 +878,7 @@ describe("newPropertyObfuscator", () => {
             treatAsScalarReceivers.push(this);
             return Array.isArray(o) && key.startsWith("scalar");
           },
-        }
+        },
       );
 
       const obfuscated = propertyObfuscator(input);
@@ -1005,7 +1005,7 @@ describe("newPropertyObfuscator", () => {
             }
             return value;
           },
-        }
+        },
       );
 
       const obfuscated = propertyObfuscator(input);
@@ -1038,7 +1038,7 @@ describe("newPropertyObfuscator", () => {
         },
         {
           caseSensitive: true,
-        }
+        },
       );
       it.each(cases)("for propertyName '%s' should obfuscate '%s' to '%s'", (propertyName, text, expected) => {
         const obfuscated = propertyObfuscator(propertyName, text);
@@ -1061,7 +1061,7 @@ describe("newPropertyObfuscator", () => {
         },
         {
           caseSensitive: false,
-        }
+        },
       );
       it.each(cases)("for propertyName '%s' should obfuscate '%s' to '%s'", (propertyName, text, expected) => {
         const obfuscated = propertyObfuscator(propertyName, text);

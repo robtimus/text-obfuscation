@@ -108,7 +108,7 @@ describe("Combining obfuscators", () => {
       obfuscatePortion({
         keepAtEnd: 4,
         atLeastFromStart: 8,
-      })
+      }),
     );
     const obfuscated = obfuscator("12345678901234");
     expect(obfuscated).toBe("1234********34");
@@ -192,7 +192,7 @@ describe("Obfuscating object properties", () => {
         caseSensitive: false, // defaults to true
         forObjects: "exclude", // defaults to "obfuscate"
         forArrays: "exclude", // defaults to "obfuscate"
-      }
+      },
     );
     const obfuscatedPassword = propertyObfuscator("password", "admin1234");
     expect(obfuscatedPassword).toBe("***");
@@ -226,7 +226,7 @@ describe("Obfuscating object properties", () => {
           }
           return value;
         },
-      }
+      },
     );
     const obfuscatedObject = propertyObfuscator({
       setAsArray: new Set(["a", "b", "c"]),
@@ -246,7 +246,7 @@ describe("Obfuscating object properties", () => {
       },
       {
         treatAsScalar: (o, key) => key === "scalarError" && o instanceof Error,
-      }
+      },
     );
     const obfuscatedObject = propertyObfuscator({
       scalarError: new Error("this will be treated as scalar"),
