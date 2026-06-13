@@ -76,7 +76,7 @@ export interface GlobalPropertyObfuscatorOptions {
   treatAsScalar?: (this: object, o: object, key: string) => boolean;
   /**
    * An optional function that replaces property values before obfuscating them or iterating over them.
-   * It takes two parameters: the value to potentially replace, and they for the value in the containing object. For array elements the key is the key for the enclosing array.
+   * It takes two parameters: the value to potentially replace, and the key for the value in the containing object. For array elements the key is the key for the enclosing array.
    * The object in which the value was found is provided as the function's `this` context.
    *
    * The return value is obfuscated instead of the original value. This can be used to replace iterable types like `Set` and `Map`,
