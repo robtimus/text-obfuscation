@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { obfuscateWithFixedLength, newPropertyObfuscator, PropertyOptions, obfuscateWithFixedValue } from "../src";
 
 describe("newPropertyObfuscator", () => {

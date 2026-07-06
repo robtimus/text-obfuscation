@@ -1,4 +1,7 @@
+/// <reference types="node" />
+
 import { IncomingHttpHeaders, OutgoingHttpHeaders } from "http";
+import { describe, it, expect } from "vitest";
 import { obfuscateWithFixedLength, newHeaderObfuscator } from "../src";
 
 describe("newHeaderObfuscator", () => {

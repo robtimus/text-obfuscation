@@ -228,7 +228,6 @@ export function newPropertyObfuscator(
   function obfuscate(propertyNameOrObject: object | string, value?: string): object | string {
     if (typeof propertyNameOrObject === "string") {
       // obfuscate(propertyName, value), value is a string
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return obfuscateProperty(propertyNameOrObject, value!, context);
     }
     return obfuscateWithDefault(propertyNameOrObject, "", undefined, context);

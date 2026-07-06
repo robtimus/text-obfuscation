@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { obfuscateWithFixedValue } from "../src";
 
 function testWithFixedValue(fixedValue: string) {

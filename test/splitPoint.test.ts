@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { atFirst, atLast, atNth, obfuscateAll, obfuscateWithFixedLength, obfuscateWithFixedValue, newSplitPoint } from "../src";
 
 describe("atFirst('@')", () => {

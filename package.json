@@ -23,43 +23,23 @@
     "format": "prettier --write \"**/*.+(json|ts|tsx)\"",
     "format:check": "prettier --check \"**/*.+(json|ts|tsx)\"",
     "build": "npm run format:check && npm run lint && npm run compile",
-    "test": "jest"
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@types/jest": "^30.0.0",
-    "@types/node": "^18.19.130",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "eslint": "^8.57.1",
-    "jest": "^30.2.0",
-    "jest-each": "^30.2.0",
-    "prettier": "^3.8.1",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.5.4"
-  },
-  "overrides": {
-    "js-yaml": "5.1.0"
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^20.19.43",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^10.6.0",
+    "jiti": "^2.7.0",
+    "prettier": "^3.9.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.63.0",
+    "vitest": "^4.1.10"
   },
   "engines": {
-    "node": ">=18"
-  },
-  "eslintConfig": {
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended"
-    ]
+    "node": ">=20"
   },
   "prettier": {
     "printWidth": 180
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "collectCoverage": true
   }
 }
